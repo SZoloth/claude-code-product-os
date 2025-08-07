@@ -6,6 +6,17 @@ Never think about project setup again. One command creates production-ready foun
 
 ## ⚡ Quick Start
 
+### First Time Setup
+```bash
+# Clone this repository
+git clone https://github.com/SZoloth/rapid-prototype-templates.git
+cd rapid-prototype-templates
+
+# Make the script executable (if needed)
+chmod +x rapid-prototype.sh
+```
+
+### Create Projects  
 ```bash
 # Create any type of project with one command
 ./rapid-prototype.sh
@@ -264,6 +275,35 @@ chmod +x rapid-prototype.sh
 *"Finally, a way to skip all the boring setup and get straight to building."*
 
 *"The iOS template saved me days of Xcode configuration headaches."*
+
+## 🐙 GitHub Setup
+
+### To Push This System to Your GitHub:
+
+1. **Create the GitHub repository:**
+   - Go to https://github.com/new
+   - Repository name: `rapid-prototype-templates`
+   - Description: `Bulletproof template system for rapid prototyping - React, iOS, Python, Full-Stack`
+   - Make it **Public** (so you can access anywhere)
+   - **DON'T** add README, .gitignore, or license (already included)
+
+2. **Run the setup script:**
+   ```bash
+   ./setup-github.sh
+   ```
+
+3. **Or manually:**
+   ```bash
+   git remote add origin https://github.com/SZoloth/rapid-prototype-templates.git
+   git push -u origin main
+   ```
+
+### To Use From Any Machine:
+```bash
+git clone https://github.com/SZoloth/rapid-prototype-templates.git
+cd rapid-prototype-templates
+./rapid-prototype.sh
+```
 
 ---
 
