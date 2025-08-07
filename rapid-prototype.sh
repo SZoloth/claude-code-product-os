@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Rapid Prototype Setup Script
 # Creates production-ready project templates with one command
@@ -13,12 +13,16 @@ BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Project types
-declare -A PROJECT_TYPES
-PROJECT_TYPES[1]="react-web"
-PROJECT_TYPES[2]="ios-swiftui"  
-PROJECT_TYPES[3]="python-backend"
-PROJECT_TYPES[4]="fullstack"
+# Function to get project type by number
+get_project_type() {
+    case $1 in
+        1) echo "react-web" ;;
+        2) echo "ios-swiftui" ;;
+        3) echo "python-backend" ;;
+        4) echo "fullstack" ;;
+        *) echo "" ;;
+    esac
+}
 
 # Helper functions
 print_header() {
@@ -98,7 +102,7 @@ prompt_project_type() {
     while true; do
         read -p "Enter your choice (1-4): " choice
         if [[ "$choice" =~ ^[1-4]$ ]]; then
-            PROJECT_TYPE="${PROJECT_TYPES[$choice]}"
+            PROJECT_TYPE="$(get_project_type $choice)"
             break
         else
             print_error "Invalid choice. Please enter 1, 2, 3, or 4."
