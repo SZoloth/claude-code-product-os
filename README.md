@@ -247,6 +247,11 @@ Every technology choice has been validated in production:
 3. **Document Changes**: Update this README
 4. **Share Examples**: Show successful projects built with this
 
+## 🙏 Credits
+
+- **AI Development Workflow**: [snarktank/ai-dev-tasks](https://github.com/snarktank/ai-dev-tasks) for the structured feature development process
+- **Template System**: Built for the Claude Code and Cursor community
+
 ## 📝 License
 
 MIT License - Use this however you want.
@@ -254,6 +259,8 @@ MIT License - Use this however you want.
 ## 🔄 AI-Powered Feature Development
 
 After creating your prototype, use the integrated **ai-dev-tasks** workflow for structured feature expansion:
+
+> 🙏 **Credit**: AI-powered feature development workflow by [snarktank/ai-dev-tasks](https://github.com/snarktank/ai-dev-tasks) - bringing structure, clarity, and control to AI-assisted coding.
 
 ### 📋 Create PRD (Product Requirements Document)
 ```bash
