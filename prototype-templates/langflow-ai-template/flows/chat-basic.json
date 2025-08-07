@@ -1,0 +1,50 @@
+{
+  "id": "chat-basic",
+  "name": "Basic Chat",
+  "description": "Simple conversational AI flow using OpenAI GPT",
+  "version": "1.0.0",
+  "components": [
+    {
+      "id": "chat_input",
+      "type": "TextInput",
+      "position": {"x": 100, "y": 100},
+      "data": {
+        "text": "",
+        "placeholder": "Enter your message..."
+      }
+    },
+    {
+      "id": "llm",
+      "type": "OpenAI",
+      "position": {"x": 300, "y": 100},
+      "data": {
+        "model_name": "gpt-3.5-turbo",
+        "temperature": 0.7,
+        "max_tokens": 1000,
+        "system_message": "You are a helpful AI assistant."
+      }
+    },
+    {
+      "id": "chat_output",
+      "type": "TextOutput",
+      "position": {"x": 500, "y": 100},
+      "data": {
+        "text": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "chat_input",
+      "source_output": "text",
+      "target": "llm",
+      "target_input": "human_message"
+    },
+    {
+      "source": "llm",
+      "source_output": "response",
+      "target": "chat_output",
+      "target_input": "text"
+    }
+  ]
+}

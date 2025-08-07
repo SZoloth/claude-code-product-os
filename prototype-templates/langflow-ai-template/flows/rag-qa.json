@@ -1,0 +1,101 @@
+{
+  "id": "rag-qa",
+  "name": "RAG Q&A System",
+  "description": "Retrieval-Augmented Generation for document-based question answering",
+  "version": "1.0.0",
+  "components": [
+    {
+      "id": "question_input",
+      "type": "TextInput",
+      "position": {"x": 100, "y": 100},
+      "data": {
+        "text": "",
+        "placeholder": "Ask a question about your documents..."
+      }
+    },
+    {
+      "id": "vector_store",
+      "type": "ChromaDB",
+      "position": {"x": 100, "y": 250},
+      "data": {
+        "collection_name": "documents",
+        "persist_directory": "./vector_store",
+        "embedding_function": "OpenAIEmbeddings"
+      }
+    },
+    {
+      "id": "retriever",
+      "type": "VectorStoreRetriever",
+      "position": {"x": 300, "y": 175},
+      "data": {
+        "k": 3,
+        "search_type": "similarity"
+      }
+    },
+    {
+      "id": "context_formatter",
+      "type": "TextFormatter",
+      "position": {"x": 500, "y": 175},
+      "data": {
+        "template": "Context:\\n{context}\\n\\nQuestion: {question}\\n\\nAnswer based on the context above:"
+      }
+    },
+    {
+      "id": "llm",
+      "type": "OpenAI",
+      "position": {"x": 700, "y": 175},
+      "data": {
+        "model_name": "gpt-4",
+        "temperature": 0.3,
+        "max_tokens": 1500,
+        "system_message": "Answer the question based only on the provided context. If the answer is not in the context, say so clearly."
+      }
+    },
+    {
+      "id": "answer_output",
+      "type": "TextOutput",
+      "position": {"x": 900, "y": 175},
+      "data": {
+        "text": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "question_input",
+      "source_output": "text",
+      "target": "retriever",
+      "target_input": "query"
+    },
+    {
+      "source": "vector_store",
+      "source_output": "vectorstore",
+      "target": "retriever",
+      "target_input": "vectorstore"
+    },
+    {
+      "source": "retriever",
+      "source_output": "documents",
+      "target": "context_formatter",
+      "target_input": "context"
+    },
+    {
+      "source": "question_input",
+      "source_output": "text",
+      "target": "context_formatter",
+      "target_input": "question"
+    },
+    {
+      "source": "context_formatter",
+      "source_output": "formatted_text",
+      "target": "llm",
+      "target_input": "human_message"
+    },
+    {
+      "source": "llm",
+      "source_output": "response",
+      "target": "answer_output",
+      "target_input": "text"
+    }
+  ]
+}

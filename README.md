@@ -79,6 +79,14 @@ That's it. Your production-ready project is created, configured, and ready for d
 - **Development**: Docker Compose environment
 - **Deployment**: Coordinated frontend + backend deployment
 
+### 5. LangFlow AI Application
+- **LangFlow** + LangChain + FastAPI for AI workflows
+- **Multi-LLM Support**: OpenAI, Anthropic, and other providers
+- **Vector Database**: ChromaDB for document embeddings and RAG
+- **Document Processing**: PDF, DOCX, TXT, Markdown support
+- **Pre-built Flows**: Chat, RAG Q&A, document summarization
+- **Production Ready**: Authentication, monitoring, error handling
+
 ## 🛠️ System Architecture
 
 ```

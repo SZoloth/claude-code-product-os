@@ -20,6 +20,7 @@ get_project_type() {
         2) echo "ios-swiftui" ;;
         3) echo "python-backend" ;;
         4) echo "fullstack" ;;
+        5) echo "langflow-ai" ;;
         *) echo "" ;;
     esac
 }
@@ -97,15 +98,16 @@ prompt_project_type() {
     echo "  2) iOS SwiftUI App (iOS 17+ + Testing)"
     echo "  3) Python Backend (FastAPI + SQLAlchemy + Testing)"
     echo "  4) Full-Stack App (React + FastAPI + Shared Types)"
+    echo "  5) LangFlow AI App (LangChain + RAG + Vector DB)"
     echo ""
     
     while true; do
-        read -p "Enter your choice (1-4): " choice
-        if [[ "$choice" =~ ^[1-4]$ ]]; then
+        read -p "Enter your choice (1-5): " choice
+        if [[ "$choice" =~ ^[1-5]$ ]]; then
             PROJECT_TYPE="$(get_project_type $choice)"
             break
         else
-            print_error "Invalid choice. Please enter 1, 2, 3, or 4."
+            print_error "Invalid choice. Please enter 1, 2, 3, 4, or 5."
         fi
     done
     
@@ -354,7 +356,7 @@ install_dependencies() {
                 fi
             fi
             ;;
-        "python-backend")
+        "python-backend"|"langflow-ai")
             python3 -m venv venv
             source venv/bin/activate
             pip install -e ".[dev]"
@@ -551,6 +553,86 @@ alembic upgrade head
 - Follow the existing logging patterns with structlog
 EOF
             ;;
+        "langflow-ai")
+            cat > "$claude_file" << EOF
+# $DISPLAY_NAME - LangFlow AI Application
+
+This is a LangFlow AI application with FastAPI backend, designed for building AI agents, RAG systems, and document processing workflows.
+
+\`\`\`bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Start development server
+uvicorn app.main:app --reload
+
+# Run tests
+pytest
+pytest --cov=app
+
+# Code quality
+black .
+isort .
+flake8 .
+mypy .
+
+# Process documents for RAG
+curl -X POST "http://localhost:8000/api/v1/flows/upload-documents" \\
+  -H "Content-Type: application/json" \\
+  -d '{"files": ["./documents/your-document.pdf"]}'
+
+# Execute AI flows
+curl -X POST "http://localhost:8000/api/v1/flows/execute" \\
+  -H "Content-Type: application/json" \\
+  -d '{"flow_id": "chat-basic", "inputs": {"message": "Hello"}}'
+\`\`\`
+
+## Architecture
+
+- **Framework**: FastAPI with LangFlow and LangChain integration
+- **AI Components**: LangChain for LLM orchestration, ChromaDB for vector storage
+- **Document Processing**: PDF, DOCX, TXT, and Markdown support
+- **Vector Database**: ChromaDB for semantic search and retrieval
+- **LLM Support**: OpenAI, Anthropic, and other providers
+- **API Design**: RESTful endpoints for flow execution and document management
+
+## Available Flows
+
+- **chat-basic**: Simple conversational AI using OpenAI GPT
+- **rag-qa**: Retrieval-Augmented Generation for document Q&A  
+- **document-summary**: AI-powered document summarization
+
+## Project Structure
+
+- \`app/api/v1/flows.py\` - LangFlow API endpoints
+- \`app/services/langflow_service.py\` - Core LangFlow logic
+- \`flows/\` - Flow configuration files (JSON)
+- \`documents/\` - Document storage for RAG applications
+- \`vector_store/\` - ChromaDB vector database storage
+
+## Environment Setup
+
+Essential environment variables in \`.env\`:
+
+\`\`\`bash
+OPENAI_API_KEY=your-openai-api-key-here
+ANTHROPIC_API_KEY=your-anthropic-api-key-here  # Optional
+LANGFLOW_URL=http://localhost:7860
+CHROMA_PERSIST_DIRECTORY=./vector_store
+\`\`\`
+
+## Guidelines for Claude
+
+- Use the LangFlow service for all AI operations
+- Follow the existing flow patterns when adding new workflows
+- Implement proper error handling for LLM API calls
+- Use async/await throughout the application
+- Store documents properly for RAG applications
+- Test all flows thoroughly with different inputs
+- Use structured logging for AI operations monitoring
+- Follow the existing API patterns for consistency
+EOF
+            ;;
         "fullstack")
             cat > "$claude_file" << EOF
 # $DISPLAY_NAME - Full Stack Application
@@ -637,6 +719,15 @@ print_completion() {
             echo "  3. uvicorn app.main:app --reload"
             echo "  4. Open http://localhost:8000/docs"
             echo "  5. Start coding!"
+            ;;
+        "langflow-ai")
+            print_info "Next steps:"
+            echo "  1. cd $PROJECT_NAME"
+            echo "  2. cp .env.example .env (add your OpenAI API key)"
+            echo "  3. source venv/bin/activate"
+            echo "  4. uvicorn app.main:app --reload"
+            echo "  5. Open http://localhost:8000/docs"
+            echo "  6. Try the AI flows and start building!"
             ;;
         "fullstack")
             print_info "Next steps:"
