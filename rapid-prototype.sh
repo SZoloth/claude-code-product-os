@@ -60,32 +60,74 @@ check_dependencies() {
         exit 1
     fi
     
-    # Check for required tools
     local missing_tools=()
+    local warnings=()
     
+    # Check Git
     if ! command -v git &> /dev/null; then
-        missing_tools+=("git")
+        missing_tools+=("git - Required for version control")
     fi
     
+    # Check Node.js and version
     if ! command -v node &> /dev/null; then
-        missing_tools+=("node")
+        missing_tools+=("node - Required for React/Full-Stack projects")
+    else
+        local node_version=$(node --version 2>/dev/null | cut -d'v' -f2 | cut -d'.' -f1 || echo "0")
+        if [[ $node_version -lt 18 ]]; then
+            warnings+=("Node.js version $node_version detected. Recommended: Node.js 18+")
+        fi
     fi
     
+    # Check npm/pnpm
     if ! command -v npm &> /dev/null && ! command -v pnpm &> /dev/null; then
-        missing_tools+=("npm or pnpm")
+        missing_tools+=("npm or pnpm - Required for React/Full-Stack projects")
     fi
     
+    # Check Python and version
     if ! command -v python3 &> /dev/null; then
-        missing_tools+=("python3")
+        missing_tools+=("python3 - Required for Python/Full-Stack/LangFlow projects")
+    else
+        local python_version=$(python3 --version 2>/dev/null | cut -d' ' -f2 | cut -d'.' -f1,2 || echo "0.0")
+        local python_major=$(echo $python_version | cut -d'.' -f1)
+        local python_minor=$(echo $python_version | cut -d'.' -f2)
+        if [[ $python_major -lt 3 ]] || [[ $python_major -eq 3 && $python_minor -lt 11 ]]; then
+            warnings+=("Python $python_version detected. Recommended: Python 3.11+")
+        fi
     fi
     
+    # Check Xcode (macOS only, for iOS projects)
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if ! command -v xcodebuild &> /dev/null; then
+            warnings+=("Xcode not detected - Required for iOS SwiftUI projects")
+        fi
+    fi
+    
+    # Check Docker (optional but recommended)
+    if ! command -v docker &> /dev/null; then
+        warnings+=("Docker not detected - Recommended for containerized deployment")
+    fi
+    
+    # Report missing tools (blocking)
     if [[ ${#missing_tools[@]} -gt 0 ]]; then
         print_error "Missing required tools:"
         for tool in "${missing_tools[@]}"; do
-            echo "  - $tool"
+            echo "  ❌ $tool"
         done
-        print_info "Please install the missing tools and try again."
+        echo ""
+        print_info "Install missing tools:"
+        echo "  • macOS: brew install git node python@3.11"
+        echo "  • Ubuntu: apt install git nodejs npm python3 python3-pip"  
+        echo "  • Windows: Use WSL or download from official websites"
         exit 1
+    fi
+    
+    # Report warnings (non-blocking)
+    if [[ ${#warnings[@]} -gt 0 ]]; then
+        print_warning "Recommendations:"
+        for warning in "${warnings[@]}"; do
+            echo "  ⚠️  $warning"
+        done
+        echo ""
     fi
     
     print_success "All dependencies found"
@@ -170,10 +212,97 @@ prompt_project_details() {
     # GitHub repository (optional)
     read -p "GitHub repository URL (optional): " GITHUB_REPO
     
+    # Starter content choice
+    echo ""
+    print_info "Starter content options:"
+    echo "  1) Demo content - Rich examples, sample data, documentation"
+    echo "  2) Minimal - Clean slate with basic structure only"
+    echo ""
+    
+    while true; do
+        read -p "Choose starter content (1-2, default: 1): " content_choice
+        if [[ -z "$content_choice" ]]; then
+            content_choice="1"
+        fi
+        
+        if [[ "$content_choice" == "1" ]]; then
+            STARTER_CONTENT="demo"
+            break
+        elif [[ "$content_choice" == "2" ]]; then
+            STARTER_CONTENT="minimal"
+            break
+        else
+            print_error "Invalid choice. Please enter 1 or 2."
+        fi
+    done
+    
     print_success "Configuration complete"
 }
 
+validate_template() {
+    local template_dir="prototype-templates/${PROJECT_TYPE}-template"
+    
+    print_info "Validating template: $PROJECT_TYPE"
+    
+    if [[ ! -d "$template_dir" ]]; then
+        print_error "Template directory not found: $template_dir"
+        exit 1
+    fi
+    
+    # Check for essential files based on project type
+    local missing_files=()
+    
+    case "$PROJECT_TYPE" in
+        "react-web")
+            [[ ! -f "$template_dir/package.json" ]] && missing_files+=("package.json")
+            [[ ! -f "$template_dir/next.config.ts" ]] && missing_files+=("next.config.ts")
+            [[ ! -f "$template_dir/tailwind.config.ts" ]] && missing_files+=("tailwind.config.ts")
+            [[ ! -d "$template_dir/src/app" ]] && missing_files+=("src/app directory")
+            [[ ! -f "$template_dir/docker-compose.yml" ]] && missing_files+=("docker-compose.yml")
+            [[ ! -f "$template_dir/Dockerfile.dev" ]] && missing_files+=("Dockerfile.dev")
+            ;;
+        "ios-swiftui")
+            [[ ! -f "$template_dir/ProjectNamePlaceholder.xcodeproj/project.pbxproj" ]] && missing_files+=("Xcode project file")
+            [[ ! -f "$template_dir/ProjectNamePlaceholder/ProjectNamePlaceholderApp.swift" ]] && missing_files+=("Main app file")
+            ;;
+        "python-backend")
+            [[ ! -f "$template_dir/pyproject.toml" ]] && missing_files+=("pyproject.toml")
+            [[ ! -f "$template_dir/app/main.py" ]] && missing_files+=("app/main.py")
+            [[ ! -d "$template_dir/app/api" ]] && missing_files+=("app/api directory")
+            [[ ! -f "$template_dir/docker-compose.yml" ]] && missing_files+=("docker-compose.yml")
+            [[ ! -f "$template_dir/Dockerfile" ]] && missing_files+=("Dockerfile")
+            ;;
+        "langflow-ai")
+            [[ ! -f "$template_dir/pyproject.toml" ]] && missing_files+=("pyproject.toml")
+            [[ ! -f "$template_dir/app/main.py" ]] && missing_files+=("app/main.py")
+            [[ ! -d "$template_dir/app/api" ]] && missing_files+=("app/api directory")
+            [[ ! -f "$template_dir/app/services/langflow_service.py" ]] && missing_files+=("langflow_service.py")
+            [[ ! -d "$template_dir/flows" ]] && missing_files+=("flows directory")
+            [[ ! -f "$template_dir/docker-compose.yml" ]] && missing_files+=("docker-compose.yml")
+            [[ ! -f "$template_dir/Dockerfile" ]] && missing_files+=("Dockerfile")
+            ;;
+        "fullstack")
+            [[ ! -f "$template_dir/docker-compose.yml" ]] && missing_files+=("docker-compose.yml")
+            [[ ! -d "$template_dir/frontend" ]] && missing_files+=("frontend directory")
+            [[ ! -d "$template_dir/backend" ]] && missing_files+=("backend directory")
+            ;;
+    esac
+    
+    if [[ ${#missing_files[@]} -gt 0 ]]; then
+        print_error "Template validation failed - missing files:"
+        for file in "${missing_files[@]}"; do
+            echo "  ❌ $file"
+        done
+        print_info "Template may be corrupted. Try updating with: git pull"
+        exit 1
+    fi
+    
+    print_success "Template validation passed"
+}
+
 create_project() {
+    validate_template
+    
     print_info "Creating project: $PROJECT_NAME"
     
     # Check if directory already exists
@@ -189,10 +318,6 @@ create_project() {
     
     # Copy template
     local template_dir="prototype-templates/${PROJECT_TYPE}-template"
-    if [[ ! -d "$template_dir" ]]; then
-        print_error "Template directory not found: $template_dir"
-        exit 1
-    fi
     
     print_info "Copying template files..."
     cp -r "$template_dir" "$PROJECT_NAME"
@@ -201,6 +326,13 @@ create_project() {
     # Replace placeholders
     print_info "Configuring project..."
     replace_placeholders
+    
+    # Handle starter content choice
+    if [[ "$STARTER_CONTENT" == "minimal" ]]; then
+        print_info "Applying minimal content template..."
+        apply_minimal_template
+    fi
+    
     print_success "Project configured"
 }
 
@@ -293,6 +425,91 @@ replace_placeholders() {
     fi
 }
 
+apply_minimal_template() {
+    local project_dir="$PROJECT_NAME"
+    
+    case "$PROJECT_TYPE" in
+        "react-web")
+            # Remove demo pages and components
+            [[ -d "$project_dir/src/app/demo" ]] && rm -rf "$project_dir/src/app/demo"
+            [[ -d "$project_dir/src/components/examples" ]] && rm -rf "$project_dir/src/components/examples"
+            [[ -f "$project_dir/src/app/examples/page.tsx" ]] && rm -f "$project_dir/src/app/examples/page.tsx"
+            
+            # Replace home page with minimal version
+            if [[ -f "$project_dir/src/app/page.tsx" ]]; then
+                cat > "$project_dir/src/app/page.tsx" << 'EOF'
+export default function Home() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Welcome to Your App
+        </h1>
+        <p className="text-lg text-gray-600">
+          Start building something amazing.
+        </p>
+      </div>
+    </main>
+  )
+}
+EOF
+            fi
+            ;;
+        "ios-swiftui")
+            # Remove demo views and example data
+            [[ -d "$project_dir/$PROJECT_NAME/Examples" ]] && rm -rf "$project_dir/$PROJECT_NAME/Examples"
+            [[ -d "$project_dir/$PROJECT_NAME/Demo" ]] && rm -rf "$project_dir/$PROJECT_NAME/Demo"
+            [[ -f "$project_dir/$PROJECT_NAME/SampleData.swift" ]] && rm -f "$project_dir/$PROJECT_NAME/SampleData.swift"
+            ;;
+        "python-backend"|"langflow-ai")
+            # Remove demo endpoints and example data
+            [[ -d "$project_dir/app/api/v1/demo" ]] && rm -rf "$project_dir/app/api/v1/demo"
+            [[ -d "$project_dir/app/examples" ]] && rm -rf "$project_dir/app/examples"
+            [[ -f "$project_dir/app/api/v1/examples.py" ]] && rm -f "$project_dir/app/api/v1/examples.py"
+            [[ -d "$project_dir/sample_data" ]] && rm -rf "$project_dir/sample_data"
+            
+            # For langflow-ai, keep essential flows but remove demo flows
+            if [[ "$PROJECT_TYPE" == "langflow-ai" ]]; then
+                [[ -f "$project_dir/flows/demo-flow.json" ]] && rm -f "$project_dir/flows/demo-flow.json"
+                [[ -d "$project_dir/documents/examples" ]] && rm -rf "$project_dir/documents/examples"
+            fi
+            ;;
+        "fullstack")
+            # Remove demo content from both frontend and backend
+            [[ -d "$project_dir/frontend/src/components/examples" ]] && rm -rf "$project_dir/frontend/src/components/examples"
+            [[ -d "$project_dir/frontend/src/app/demo" ]] && rm -rf "$project_dir/frontend/src/app/demo"
+            [[ -d "$project_dir/backend/app/api/v1/demo" ]] && rm -rf "$project_dir/backend/app/api/v1/demo"
+            [[ -d "$project_dir/backend/sample_data" ]] && rm -rf "$project_dir/backend/sample_data"
+            
+            # Replace frontend home page
+            if [[ -f "$project_dir/frontend/src/app/page.tsx" ]]; then
+                cat > "$project_dir/frontend/src/app/page.tsx" << 'EOF'
+export default function Home() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Full-Stack Application
+        </h1>
+        <p className="text-lg text-gray-600 mb-8">
+          React frontend connected to FastAPI backend
+        </p>
+        <div className="text-sm text-gray-500">
+          <p>Frontend: http://localhost:3000</p>
+          <p>Backend: http://localhost:8000</p>
+        </div>
+      </div>
+    </main>
+  )
+}
+EOF
+            fi
+            ;;
+    esac
+    
+    print_success "Minimal template applied"
+}
+
 setup_git() {
     print_info "Initializing git repository..."
     
@@ -370,6 +587,82 @@ install_dependencies() {
     print_success "Dependencies installed"
 }
 
+setup_environment() {
+    print_info "Setting up environment configuration..."
+    
+    cd "$PROJECT_NAME"
+    
+    case "$PROJECT_TYPE" in
+        "react-web"|"fullstack")
+            # Handle React/Full-Stack environment
+            if [[ -f ".env.example" ]]; then
+                cp .env.example .env.local
+                print_success "Created .env.local from template"
+                
+                # For full-stack, also handle backend
+                if [[ "$PROJECT_TYPE" == "fullstack" && -f "backend/.env.example" ]]; then
+                    cd backend
+                    cp .env.example .env
+                    cd ..
+                    print_success "Created backend .env from template"
+                fi
+            fi
+            ;;
+        "python-backend")
+            if [[ -f ".env.example" ]]; then
+                cp .env.example .env
+                print_success "Created .env from template"
+            fi
+            ;;
+        "langflow-ai")
+            if [[ -f ".env.example" ]]; then
+                cp .env.example .env
+                print_success "Created .env from template"
+                
+                echo ""
+                print_info "🤖 AI Configuration Setup"
+                echo "Your LangFlow AI application needs API keys to function."
+                echo ""
+                
+                # Prompt for OpenAI API key
+                read -p "Enter your OpenAI API key (or press Enter to skip): " openai_key
+                if [[ -n "$openai_key" ]]; then
+                    if [[ "$OSTYPE" == "darwin"* ]]; then
+                        sed -i '' "s/OPENAI_API_KEY=your-openai-api-key-here/OPENAI_API_KEY=$openai_key/" .env
+                    else
+                        sed -i "s/OPENAI_API_KEY=your-openai-api-key-here/OPENAI_API_KEY=$openai_key/" .env
+                    fi
+                    print_success "OpenAI API key configured"
+                else
+                    print_warning "Remember to add your OpenAI API key to .env file"
+                fi
+                
+                # Prompt for Anthropic API key (optional)
+                read -p "Enter your Anthropic API key (optional, press Enter to skip): " anthropic_key
+                if [[ -n "$anthropic_key" ]]; then
+                    if [[ "$OSTYPE" == "darwin"* ]]; then
+                        sed -i '' "s/ANTHROPIC_API_KEY=your-anthropic-api-key-here/ANTHROPIC_API_KEY=$anthropic_key/" .env
+                    else
+                        sed -i "s/ANTHROPIC_API_KEY=your-anthropic-api-key-here/ANTHROPIC_API_KEY=$anthropic_key/" .env
+                    fi
+                    print_success "Anthropic API key configured"
+                fi
+                
+                echo ""
+                print_info "📄 Document Processing Ready"
+                echo "Place documents in the 'documents/' folder for RAG applications"
+            fi
+            ;;
+        "ios-swiftui")
+            # iOS projects don't typically need .env files
+            print_info "iOS project - no environment file needed"
+            ;;
+    esac
+    
+    cd ..
+    print_success "Environment configuration complete"
+}
+
 copy_ai_workflow() {
     print_info "Adding AI development workflow..."
     
@@ -403,6 +696,168 @@ EOF
     else
         print_info "AI workflow not available (submodule not initialized)"
     fi
+}
+
+create_vscode_settings() {
+    print_info "Adding VS Code workspace settings..."
+    
+    local vscode_dir="$PROJECT_NAME/.vscode"
+    mkdir -p "$vscode_dir"
+    
+    case "$PROJECT_TYPE" in
+        "react-web")
+            cat > "$vscode_dir/settings.json" << EOF
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "typescript": "typescript"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+}
+EOF
+            
+            cat > "$vscode_dir/extensions.json" << EOF
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json"
+  ]
+}
+EOF
+            ;;
+        "ios-swiftui")
+            cat > "$vscode_dir/settings.json" << EOF
+{
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "editor.tabSize": 4,
+  "files.associations": {
+    "*.swift": "swift"
+  },
+  "swift.path": "/usr/bin/swift",
+  "sourcekit-lsp.serverPath": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp"
+}
+EOF
+            
+            cat > "$vscode_dir/extensions.json" << EOF
+{
+  "recommendations": [
+    "sswg.swift-lang",
+    "vknabel.vscode-apple-swift-format",
+    "ms-vscode.vscode-json"
+  ]
+}
+EOF
+            ;;
+        "python-backend"|"langflow-ai")
+            cat > "$vscode_dir/settings.json" << EOF
+{
+  "python.defaultInterpreterPath": "./venv/bin/python",
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "."
+  ],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true
+  }
+}
+EOF
+            
+            cat > "$vscode_dir/extensions.json" << EOF
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.flake8",
+    "ms-python.mypy-type-checker",
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-toolsai.jupyter",
+    "ms-vscode.vscode-json"
+  ]
+}
+EOF
+            ;;
+        "fullstack")
+            cat > "$vscode_dir/settings.json" << EOF
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "python.defaultInterpreterPath": "./backend/venv/bin/python",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
+  },
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "typescript": "typescript"
+  },
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.testing.pytestEnabled": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true
+  }
+}
+EOF
+            
+            cat > "$vscode_dir/extensions.json" << EOF
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "ms-python.python",
+    "ms-python.flake8",
+    "ms-python.black-formatter",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-json"
+  ]
+}
+EOF
+            ;;
+    esac
+    
+    print_success "VS Code settings configured"
 }
 
 create_claude_md() {
@@ -701,7 +1156,7 @@ print_completion() {
         "react-web")
             print_info "Next steps:"
             echo "  1. cd $PROJECT_NAME"
-            echo "  2. npm run dev"
+            echo "  2. npm run dev  # OR docker-compose up for containerized development"
             echo "  3. Open http://localhost:3000"
             echo "  4. Start coding in Cursor!"
             ;;
@@ -715,19 +1170,17 @@ print_completion() {
         "python-backend")
             print_info "Next steps:"
             echo "  1. cd $PROJECT_NAME"
-            echo "  2. source venv/bin/activate"
-            echo "  3. uvicorn app.main:app --reload"
-            echo "  4. Open http://localhost:8000/docs"
-            echo "  5. Start coding!"
+            echo "  2. docker-compose up -d  # OR source venv/bin/activate && uvicorn app.main:app --reload"
+            echo "  3. Open http://localhost:8000/docs"
+            echo "  4. Start coding!"
             ;;
         "langflow-ai")
             print_info "Next steps:"
             echo "  1. cd $PROJECT_NAME"
-            echo "  2. cp .env.example .env (add your OpenAI API key)"
-            echo "  3. source venv/bin/activate"
-            echo "  4. uvicorn app.main:app --reload"
-            echo "  5. Open http://localhost:8000/docs"
-            echo "  6. Try the AI flows and start building!"
+            echo "  2. Add your API keys to .env file"
+            echo "  3. docker-compose up -d  # OR source venv/bin/activate && uvicorn app.main:app --reload"
+            echo "  4. Open http://localhost:8000/docs"
+            echo "  5. Try the AI flows and start building!"
             ;;
         "fullstack")
             print_info "Next steps:"
@@ -757,6 +1210,7 @@ main() {
     echo "  Project: $DISPLAY_NAME ($PROJECT_NAME)"
     echo "  Type: $PROJECT_TYPE"
     echo "  Author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
+    echo "  Content: $STARTER_CONTENT"
     [[ "$PROJECT_TYPE" == "ios-swiftui" ]] && echo "  Bundle ID: $BUNDLE_ID"
     [[ -n "$API_URL" ]] && echo "  API URL: $API_URL"
     [[ -n "$GITHUB_REPO" ]] && echo "  Repository: $GITHUB_REPO"
@@ -771,7 +1225,9 @@ main() {
     create_project
     setup_git
     install_dependencies
+    setup_environment
     copy_ai_workflow
+    create_vscode_settings
     create_claude_md
     print_completion
 }
