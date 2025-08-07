@@ -95,6 +95,7 @@ Your Machine
 
 ## 🚀 Development Workflow
 
+### Phase 1: Create Foundation
 1. **Generate Project**
    ```bash
    ./rapid-prototype.sh
@@ -106,12 +107,25 @@ Your Machine
    # Everything is ready - just start coding!
    ```
 
-3. **Claude Code Integration**
+### Phase 2: Structured Feature Development 
+3. **Plan Features with AI**
+   ```bash
+   # Copy ai-dev-tasks workflow to your project
+   cp -r ai-dev-workflow/tasks your-new-project/
+   
+   # Follow structured workflow:
+   # 1. Create PRD (Product Requirements Document)
+   # 2. Generate detailed task list  
+   # 3. Implement tasks step-by-step with AI approval
+   ```
+
+4. **Claude Code Integration**
    - Each project includes `CLAUDE.md` with AI coding guidance
    - Perfect prompts and context for Claude Code/Cursor
    - Architecture decisions and patterns documented
+   - **AI-Dev-Tasks** workflow for complex features
 
-4. **Deploy When Ready**
+5. **Deploy When Ready**
    - GitHub Actions pre-configured
    - Push to main → Auto-deploy to production
    - Environment configs included
@@ -237,6 +251,40 @@ Every technology choice has been validated in production:
 
 MIT License - Use this however you want.
 
+## 🔄 AI-Powered Feature Development
+
+After creating your prototype, use the integrated **ai-dev-tasks** workflow for structured feature expansion:
+
+### 📋 Create PRD (Product Requirements Document)
+```bash
+# In your project directory
+cp -r ../ai-dev-workflow/* .
+
+# Use create-prd.md workflow in Claude/Cursor
+# Creates: /tasks/prd-[feature-name].md
+```
+
+### 📝 Generate Task List
+```bash
+# Use generate-tasks.md workflow
+# Creates detailed implementation roadmap
+# Breaks features into manageable sub-tasks
+```
+
+### ⚙️ Implement Step-by-Step
+```bash
+# Use process-task-list.md workflow
+# Implement one task at a time
+# Get AI approval before proceeding
+# Automatic testing and commits
+```
+
+### 🎯 Perfect for:
+- **Complex features** that need planning
+- **Team collaboration** with clear requirements
+- **Quality control** with step-by-step approval
+- **Professional development** workflow
+
 ## 🆘 Troubleshooting
 
 ### Common Issues
@@ -259,12 +307,17 @@ chmod +x rapid-prototype.sh
 - Open in Xcode and check signing settings
 - Update team ID and bundle identifier
 
+**AI workflow not working**
+- Ensure you've copied ai-dev-workflow to your project
+- Follow the markdown guides step-by-step
+
 ### Getting Help
 
 1. Check the generated project's README.md
 2. Look at CLAUDE.md for AI coding guidance  
 3. Check GitHub Issues in generated projects
 4. Each template has comprehensive documentation
+5. Review ai-dev-workflow guides for feature development
 
 ---
 

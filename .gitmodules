@@ -1,0 +1,3 @@
+[submodule "ai-dev-workflow"]
+	path = ai-dev-workflow
+	url = https://github.com/snarktank/ai-dev-tasks.git

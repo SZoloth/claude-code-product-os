@@ -368,6 +368,24 @@ install_dependencies() {
     print_success "Dependencies installed"
 }
 
+copy_ai_workflow() {
+    print_info "Adding AI development workflow..."
+    
+    if [ -d "ai-dev-workflow" ]; then
+        # Copy the workflow files to project
+        mkdir -p "$PROJECT_NAME/ai-dev-workflow"
+        cp -r ai-dev-workflow/* "$PROJECT_NAME/ai-dev-workflow/"
+        
+        # Create tasks directory
+        mkdir -p "$PROJECT_NAME/tasks"
+        
+        print_success "AI workflow added - use for structured feature development"
+        print_info "See README.md for ai-dev-tasks workflow instructions"
+    else
+        print_info "AI workflow not available (submodule not initialized)"
+    fi
+}
+
 create_claude_md() {
     print_info "Creating CLAUDE.md configuration..."
     
@@ -645,6 +663,7 @@ main() {
     create_project
     setup_git
     install_dependencies
+    copy_ai_workflow
     create_claude_md
     print_completion
 }
