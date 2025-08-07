@@ -1,0 +1,65 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Logs
+*.log
+logs/
+
+# Generated projects (optional - you might want to include examples)
+# Uncomment these if you don't want generated test projects in the repo
+# test-*
+# sample-*
+# demo-*
+
+# Node modules in any generated projects
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+**/coverage/
+
+# Python cache in any generated projects  
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/venv/
+**/env/
+
+# iOS/Xcode in any generated projects
+**/xcuserdata/
+**/build/
+**/DerivedData/
+**/*.xcworkspace
+**/.swiftpm/
+
+# Backup files
+*.bak
+*.backup
+
+# Environment files (these contain secrets)
+**/.env
+**/.env.local
+**/.env.production
+**/.env.staging
+
+# But keep the example files
+!**/.env.example

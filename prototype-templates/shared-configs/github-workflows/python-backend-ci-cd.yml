@@ -1,0 +1,223 @@
+name: Python Backend CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  PYTHON_VERSION: '3.11'
+  POSTGRESQL_VERSION: '16'
+
+jobs:
+  # Quality checks and tests
+  test:
+    name: Test & Quality
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run code formatting check
+        run: black --check .
+
+      - name: Run import sorting check
+        run: isort --check-only .
+
+      - name: Run linting
+        run: flake8 .
+
+      - name: Run type checking
+        run: mypy app
+
+      - name: Run tests
+        run: pytest --cov=app --cov-report=xml --cov-report=html
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
+          REDIS_URL: redis://localhost:6379
+          ENVIRONMENT: testing
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+
+  # Security scanning
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run security checks with bandit
+        run: bandit -r app/ -f json -o bandit-report.json || true
+
+      - name: Run dependency vulnerability scan
+        run: pip-audit --format=json --output=pip-audit-report.json || true
+
+      - name: Upload security scan results
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            pip-audit-report.json
+
+  # Build Docker image
+  build:
+    name: Build Docker Image
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: PROJECT_AUTHOR_PLACEHOLDER/PROJECT_NAME_PLACEHOLDER
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+
+    environment:
+      name: staging
+      url: https://staging-api.PROJECT_NAME_PLACEHOLDER.com
+
+    steps:
+      - name: Deploy to Railway
+        run: |
+          echo "Deploy to staging environment"
+          # Add your deployment commands here
+          # Example for Railway:
+          # railway deploy --environment=staging
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    environment:
+      name: production
+      url: https://api.PROJECT_NAME_PLACEHOLDER.com
+
+    steps:
+      - name: Deploy to Railway
+        run: |
+          echo "Deploy to production environment"
+          # Add your deployment commands here
+          # Example for Railway:
+          # railway deploy --environment=production
+
+      - name: Run database migrations
+        run: |
+          echo "Running database migrations"
+          # Add migration commands here
+          # alembic upgrade head
+
+      - name: Health check
+        run: |
+          echo "Performing health check"
+          # Add health check commands here
+          # curl -f https://api.PROJECT_NAME_PLACEHOLDER.com/health
+
+  # Cleanup old Docker images
+  cleanup:
+    name: Cleanup
+    needs: [deploy-production]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Delete old Docker images
+        run: |
+          echo "Cleaning up old Docker images"
+          # Add cleanup commands here
