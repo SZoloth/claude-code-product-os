@@ -1,35 +1,34 @@
 ## Relevant Files
 
-- `package.json` - Scripts and dependencies for React + TypeScript + Vite + Tailwind.
-- `vite.config.ts` - Build/dev server configuration.
-- `tailwind.config.js` / `postcss.config.js` - Styling system.
-- `src/App.tsx` - App shell and router.
-- `src/routes/Wizard.tsx` - Wizard container routing steps.
-- `src/routes/steps/DescribeStep.tsx` - Paste/upload step UI.
-- `src/routes/steps/JourneysStep.tsx` - Optional journey structuring UI.
-- `src/routes/steps/PreviewStep.tsx` - Preview LLM-extracted events.
-- `src/routes/steps/EditStep.tsx` - Inline table editor for events/properties.
-- `src/routes/steps/ExportStep.tsx` - Export (CSV/Markdown/Datadog/JIRA text).
-- `src/components/TableEditor.tsx` - Event/property table editor.
-- `src/components/FileDropzone.tsx` - Upload control for .md/.docx/.pdf.
-- `src/lib/llm/openaiClient.ts` - OpenAI client with temperature and timeouts.
-- `src/lib/llm/prompts.ts` - System/user prompts aligned to Section 12.
-- `src/lib/parsing/markdown.ts` - Markdown extraction → text.
-- `src/lib/parsing/docx.ts` - .docx extraction → text.
-- `src/lib/parsing/pdf.ts` - .pdf extraction → text.
-- `src/lib/parsing/preprocess.ts` - Normalize, chunk, summarize >60k chars.
-- `src/lib/schema/dataDictionary.ts` - Types/JSON Schema for Section 7 fields.
-- `src/lib/schema/validators.ts` - Schema validation and naming rules.
-- `src/lib/export/csv.ts` - CSV generator conforming to Section 7 columns.
-- `src/lib/export/markdown.ts` - Markdown summary generator.
-- `src/lib/export/datadog.ts` - Datadog JS stubs per event type.
-- `src/lib/export/jira.ts` - JIRA-ready ticket text generator.
-- `src/lib/storage/local.ts` - Local storage and import/export of project JSON.
-- `src/lib/storage/snapshots.ts` - Snapshot versioning utilities.
-- `src/lib/utils/naming.ts` - snake_case normalizers and uniqueness helpers.
-- `src/lib/utils/types.ts` - Shared TypeScript types.
-- `src/**/*.test.ts` - Unit tests colocated with implementation files.
-- `.env.example` - API keys and configuration template.
+- `app/package.json` - Scripts and dependencies for React + TypeScript + Vite + Tailwind.
+- `app/vite.config.ts` - Build/dev server configuration.
+- `app/src/App.tsx` - App shell and router.
+- `app/src/routes/Wizard.tsx` - Wizard container routing steps.
+- `app/src/routes/steps/DescribeStep.tsx` - Paste/upload step UI.
+- `app/src/routes/steps/JourneysStep.tsx` - Optional journey structuring UI.
+- `app/src/routes/steps/PreviewStep.tsx` - Preview LLM-extracted events.
+- `app/src/routes/steps/EditStep.tsx` - Inline table editor for events/properties.
+- `app/src/routes/steps/ExportStep.tsx` - Export (CSV/Markdown/Datadog/JIRA text).
+- `app/src/components/TableEditor.tsx` - Event/property table editor.
+- `app/src/components/FileDropzone.tsx` - Upload control for .md/.docx/.pdf.
+- `app/src/lib/llm/openaiClient.ts` - OpenAI client with temperature and timeouts.
+- `app/src/lib/llm/prompts.ts` - System/user prompts aligned to Section 12.
+- `app/src/lib/parsing/markdown.ts` - Markdown extraction → text.
+- `app/src/lib/parsing/docx.ts` - .docx extraction → text.
+- `app/src/lib/parsing/pdf.ts` - .pdf extraction → text.
+- `app/src/lib/parsing/preprocess.ts` - Normalize, chunk, summarize >60k chars.
+- `app/src/lib/schema/dataDictionary.ts` - Types/JSON Schema for Section 7 fields.
+- `app/src/lib/schema/validators.ts` - Schema validation and naming rules.
+- `app/src/lib/export/csv.ts` - CSV generator conforming to Section 7 columns.
+- `app/src/lib/export/markdown.ts` - Markdown summary generator.
+- `app/src/lib/export/datadog.ts` - Datadog JS stubs per event type.
+- `app/src/lib/export/jira.ts` - JIRA-ready ticket text generator.
+- `app/src/lib/storage/local.ts` - Local storage and import/export of project JSON.
+- `app/src/lib/storage/snapshots.ts` - Snapshot versioning utilities.
+- `app/src/lib/utils/naming.ts` - snake_case normalizers and uniqueness helpers.
+- `app/src/lib/utils/types.ts` - Shared TypeScript types.
+- `app/src/**/*.test.ts` - Unit tests colocated with implementation files.
+- `app/.env.example` - API keys and configuration template.
 
 ### Notes
 
