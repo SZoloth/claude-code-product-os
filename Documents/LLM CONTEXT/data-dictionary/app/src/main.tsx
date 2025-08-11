@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        index: true,
+        path: '',
         element: <Wizard />,
         children: [
           { index: true, element: <DescribeStep /> },
