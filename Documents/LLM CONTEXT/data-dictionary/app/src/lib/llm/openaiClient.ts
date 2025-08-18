@@ -223,6 +223,54 @@ export class OpenAIClient {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
+  /**
+   * Determine if we should use the uncertainty-focused prompt
+   * based on document complexity and content indicators
+   */
+  private shouldUseUncertaintyPrompt(
+    input: string, 
+    context?: { fileName?: string; fileSize?: number; documentStructure?: any }
+  ): boolean {
+    // Use uncertainty prompt for complex documents
+    if (context?.documentStructure?.complexity === 'high') {
+      return true
+    }
+    
+    // Use uncertainty prompt for very large documents
+    if (context?.fileSize && context.fileSize > 100000) { // > 100KB
+      return true
+    }
+    
+    // Use uncertainty prompt if the document contains uncertainty indicators
+    const uncertaintyIndicators = [
+      'tbd', 'todo', 'placeholder', 'draft', 'preliminary', 'proposal',
+      'concept', 'idea', 'maybe', 'possibly', 'might', 'could be',
+      'unclear', 'uncertain', 'depends on', 'to be determined',
+      'needs research', 'open question', 'assumption'
+    ]
+    
+    const inputLower = input.toLowerCase()
+    const hasUncertaintyIndicators = uncertaintyIndicators.some(indicator => 
+      inputLower.includes(indicator)
+    )
+    
+    if (hasUncertaintyIndicators) {
+      return true
+    }
+    
+    // Use uncertainty prompt for technical specs or wireframes that might be implementation-light
+    const techSpecIndicators = [
+      'wireframe', 'mockup', 'prototype', 'user story', 'acceptance criteria',
+      'technical spec', 'api spec', 'endpoint', 'database', 'schema'
+    ]
+    
+    const hasTechSpecIndicators = techSpecIndicators.some(indicator => 
+      inputLower.includes(indicator)
+    )
+    
+    return hasTechSpecIndicators
+  }
+
   async extractDataDictionary(
     input: string,
     context?: {
@@ -236,8 +284,12 @@ export class OpenAIClient {
     confidence: number
     reasoning: string
     uncertainties?: string[]
+    isValid: boolean
+    errors: string[]
+    warnings: string[]
   }> {
-    const { createUserPrompt, SYSTEM_PROMPT } = await import('./prompts')
+    const { createUserPrompt, createUncertaintyPrompt, SYSTEM_PROMPT } = await import('./prompts')
+    const { DataDictionaryPostProcessor } = await import('./postProcessor')
     
     const promptContext = {
       documentText: input,
@@ -246,7 +298,11 @@ export class OpenAIClient {
       documentStructure: context?.documentStructure
     }
     
-    const userPrompt = createUserPrompt(promptContext)
+    // Determine if we should use the uncertainty-focused prompt
+    const useUncertaintyPrompt = this.shouldUseUncertaintyPrompt(input, context)
+    const userPrompt = useUncertaintyPrompt 
+      ? createUncertaintyPrompt(promptContext)
+      : createUserPrompt(promptContext)
     
     const messages: OpenAIMessage[] = [
       { role: 'system', content: SYSTEM_PROMPT },
@@ -261,30 +317,23 @@ export class OpenAIClient {
         throw new Error('No response content received from OpenAI')
       }
 
-      // Parse the JSON response
-      let parsedResponse
-      try {
-        parsedResponse = JSON.parse(content)
-      } catch (parseError) {
-        // Try to extract JSON from markdown code blocks if present
-        const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/)
-        if (jsonMatch) {
-          parsedResponse = JSON.parse(jsonMatch[1])
-        } else {
-          throw new Error(`Failed to parse JSON response: ${parseError}`)
-        }
-      }
+      // Use the new post-processor for comprehensive normalization
+      onProgress?.({
+        state: 'processing_response',
+        message: 'Normalizing and validating response...',
+        elapsedMs: Date.now() - (Date.now() - 1000) // Approximate elapsed time
+      })
 
-      // Validate the response structure
-      if (!parsedResponse.events || !Array.isArray(parsedResponse.events)) {
-        throw new Error('Invalid response format: missing events array')
-      }
-
+      const result = DataDictionaryPostProcessor.processLLMResponse(content)
+      
       return {
-        dataDictionary: parsedResponse,
-        confidence: this.calculateConfidence(parsedResponse),
-        reasoning: this.generateReasoning(parsedResponse),
-        uncertainties: this.extractUncertainties(parsedResponse)
+        dataDictionary: result.dataDictionary,
+        confidence: result.confidence,
+        reasoning: result.reasoning,
+        uncertainties: result.uncertainties,
+        isValid: result.isValid,
+        errors: result.errors,
+        warnings: result.warnings
       }
 
     } catch (error) {
@@ -296,57 +345,6 @@ export class OpenAIClient {
     }
   }
 
-  private calculateConfidence(dataDictionary: any): number {
-    if (!dataDictionary.events || dataDictionary.events.length === 0) {
-      return 0
-    }
-
-    let totalScore = 0
-    let eventCount = dataDictionary.events.length
-
-    for (const event of dataDictionary.events) {
-      let eventScore = 0
-      
-      // Required fields present
-      if (event.event_name && event.event_type && event.when_to_fire) eventScore += 30
-      if (event.properties && event.properties.length > 0) eventScore += 20
-      if (event.event_purpose && event.event_purpose.length > 10) eventScore += 20
-      if (event.actor && event.object) eventScore += 15
-      if (event.context_surface) eventScore += 10
-      if (event.datadog_api) eventScore += 5
-      
-      totalScore += eventScore
-    }
-
-    return Math.min(100, Math.round(totalScore / eventCount))
-  }
-
-  private generateReasoning(dataDictionary: any): string {
-    const eventCount = dataDictionary.events?.length || 0
-    const intentCount = dataDictionary.events?.filter((e: any) => e.event_type === 'intent').length || 0
-    const successCount = dataDictionary.events?.filter((e: any) => e.event_type === 'success').length || 0
-    const failureCount = dataDictionary.events?.filter((e: any) => e.event_type === 'failure').length || 0
-    
-    return `Extracted ${eventCount} events following Intent-Success-Failure pattern: ${intentCount} intent events, ${successCount} success events, and ${failureCount} failure events. Events focus on user journeys and actionable analytics rather than vanity metrics.`
-  }
-
-  private extractUncertainties(dataDictionary: any): string[] {
-    const uncertainties: string[] = []
-    
-    if (!dataDictionary.events) return uncertainties
-    
-    for (const event of dataDictionary.events) {
-      if (event.notes && event.notes.toLowerCase().includes('uncertain')) {
-        uncertainties.push(`${event.event_name}: ${event.notes}`)
-      }
-      
-      if (!event.properties || event.properties.length === 0) {
-        uncertainties.push(`${event.event_name}: No context properties defined - may limit segmentation capabilities`)
-      }
-    }
-    
-    return uncertainties
-  }
 }
 
 // Default client instance - lazy loading to avoid errors in test environments

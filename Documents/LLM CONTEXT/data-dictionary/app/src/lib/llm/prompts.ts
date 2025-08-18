@@ -51,7 +51,7 @@ Generate events conforming to this exact structure:
 interface DataDictionaryEvent {
   event_name: string           // snake_case, unique, descriptive
   event_type: 'intent' | 'success' | 'failure'
-  event_action_type: 'action' | 'error' | 'feature_flag'
+  event_action_type: 'action' | 'error' | 'feature_flag'  // Use 'action' for user behaviors, 'error' for system errors, 'feature_flag' for A/B tests
   event_purpose: string        // Clear business justification
   user_story?: string         // Optional user story format
   when_to_fire: string        // Specific trigger conditions
@@ -64,7 +64,7 @@ interface DataDictionaryEvent {
   priority?: string           // Low/Medium/High
   lifecycle_status: 'proposed' | 'approved' | 'implemented' | 'deprecated'
   notes?: string              // Include when uncertain or needs clarification
-  datadog_api: 'addAction' | 'addError' | 'addFeatureFlagEvaluation'
+  datadog_api: 'addAction' | 'addError' | 'addFeatureFlagEvaluation'  // Auto-mapped from event types
   datadog_sample_code?: string // Implementation example
   error_code?: string         // Required for failure events
   error_message?: string      // Required for failure events
@@ -74,8 +74,20 @@ interface DataDictionaryEvent {
 ## Quality Standards
 
 ### Pressure Test Each Event:
+For every event you propose, apply this critical test:
 "If 99% of users performed this action, what would I do about it? What would it tell me?"
-If you can't identify actionable insights, the event may not be worth tracking.
+
+If you cannot identify specific, actionable insights that would drive product decisions, either:
+1. **Refine the event** to make it more actionable with better context
+2. **Add detailed notes** explaining the uncertainty and what additional context is needed
+3. **Skip the event** if it would only provide vanity metrics
+
+**Required Pressure Test Questions for Each Event:**
+- What specific action would I take if this metric was surprisingly high?
+- What specific action would I take if this metric was surprisingly low?  
+- How would this help teams prioritize product improvements?
+- What follow-up questions would this data enable?
+- What user segments or behaviors would this help identify?
 
 ### Essential Context Properties:
 - **User Profile**: Role, experience level, preferences that influence behavior
@@ -88,6 +100,27 @@ If you can't identify actionable insights, the event may not be worth tracking.
 - Be specific and descriptive
 - Follow pattern: {object}_{action}_{outcome} when applicable
 - Examples: user_login_successful, cart_item_added, payment_process_failed
+
+### Event Classification and Datadog API Mapping:
+
+**Event Action Types:**
+- **action**: Standard user behaviors and system operations (most common)
+- **error**: System-level errors, exceptions, and technical failures
+- **feature_flag**: A/B tests, feature toggles, and experimental feature usage
+
+**Datadog API Mapping Rules:**
+- **addAction**: User behaviors, successful operations, intent tracking
+  - event_action_type='action' + event_type='intent|success'
+- **addError**: All failures, errors, and unsuccessful operations
+  - event_action_type='error' (any event_type)
+  - event_action_type='action' + event_type='failure'
+- **addFeatureFlagEvaluation**: Feature flag evaluations and A/B test exposures
+  - event_action_type='feature_flag' (any event_type)
+
+**Choosing Event Action Types:**
+- Use 'action' for: user clicks, form submissions, page navigation, successful transactions
+- Use 'error' for: API errors, validation failures, system crashes, timeout errors
+- Use 'feature_flag' for: A/B test variant assignments, feature toggle evaluations, experimental feature exposures
 
 ## Analysis Process
 
@@ -117,9 +150,13 @@ Return valid JSON matching this exact structure:
 - Focus on business-critical user journeys and outcomes
 - Prioritize events that enable "why" analysis over simple counts
 - Include failure events with specific error context
-- Add notes field when uncertain about implementation details
+- **CRITICAL**: Add notes field when uncertain about implementation details or when events don't clearly pass pressure testing
 - Ensure event names are unique and follow snake_case convention
-- Map appropriate datadog_api values (addAction for intent/success, addError for failures)
+- Map appropriate datadog_api values following these rules:
+  - event_action_type='feature_flag' → datadog_api='addFeatureFlagEvaluation'
+  - event_action_type='error' → datadog_api='addError'
+  - event_action_type='action' + event_type='failure' → datadog_api='addError'
+  - event_action_type='action' + event_type='intent|success' → datadog_api='addAction'
 - Set realistic priority levels based on business impact
 
 Remember: The goal is actionable analytics that help teams understand what successful users do differently from unsuccessful users, not just counting what users do.`
@@ -169,6 +206,19 @@ Before finalizing each event, ensure:
 - [ ] "Why" analysis is possible with the tracked data
 - [ ] Business value is clear from event_purpose
 - [ ] Failure events include appropriate error context
+- [ ] **PRESSURE TEST PASSED**: Event enables specific, actionable decisions
+- [ ] **UNCERTAINTY HANDLED**: If pressure test is unclear, notes field explains what context is needed
+
+## Pressure Test Enforcement
+
+For each event, you MUST be able to complete this statement:
+"When this event [increases/decreases significantly], teams should [specific action] because [specific insight]."
+
+If you cannot complete this statement confidently, add detailed notes explaining:
+- What additional context would make this event actionable
+- What business questions this event is trying to answer
+- What product decisions this would inform
+- Any implementation uncertainties that need clarification
 
 Generate a complete data dictionary that enables teams to understand user behavior patterns and optimize the product experience based on data-driven insights.`
 

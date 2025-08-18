@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.tsx'
 
 import Wizard from './routes/Wizard.tsx'
+import About from './routes/About.tsx'
 import DescribeStep from './routes/steps/DescribeStep.tsx'
 import JourneysStep from './routes/steps/JourneysStep.tsx'
 import PreviewStep from './routes/steps/PreviewStep.tsx'
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
           { path: 'export', element: <ExportStep /> },
         ],
       },
-      { path: 'about', element: <div className="prose dark:prose-invert"><h2>About</h2><p>MVP demo.</p></div> },
+      { path: 'about', element: <About /> },
     ],
   },
 ])

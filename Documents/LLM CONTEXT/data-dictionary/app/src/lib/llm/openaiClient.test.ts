@@ -320,20 +320,34 @@ describe('OpenAIClient', () => {
         })
       } as Response)
 
-      await expect(
-        client.extractDataDictionary(
-          'Test input',
-          {},
-          (update) => progressUpdates.push(update)
-        )
-      ).rejects.toThrow('Failed to parse JSON response')
+      const result = await client.extractDataDictionary(
+        'Test input',
+        {},
+        (update) => progressUpdates.push(update)
+      )
+
+      expect(result.isValid).toBe(false)
+      expect(result.errors.length).toBeGreaterThan(0)
+      expect(result.errors[0]).toMatch(/Critical parsing error/)
+      expect(result.dataDictionary.events).toHaveLength(0)
     })
 
     it('should handle JSON in markdown code blocks', async () => {
       const progressUpdates: ProgressUpdate[] = []
       const jsonContent = {
         version: '1.0',
-        events: [{ event_name: 'test_event', event_type: 'intent' }]
+        events: [{ 
+          event_name: 'test_event', 
+          event_type: 'intent',
+          event_action_type: 'action',
+          event_purpose: 'Test event purpose',
+          when_to_fire: 'Test trigger',
+          actor: 'user',
+          object: 'test',
+          context_surface: 'test_page',
+          properties: [],
+          lifecycle_status: 'proposed'
+        }]
       }
       
       mockFetch.mockResolvedValueOnce({
@@ -355,7 +369,10 @@ describe('OpenAIClient', () => {
         (update) => progressUpdates.push(update)
       )
 
-      expect(result.dataDictionary).toEqual(jsonContent)
+      expect(result.dataDictionary.events).toHaveLength(1)
+      expect(result.dataDictionary.events[0].event_name).toBe('test_event')
+      expect(result.dataDictionary.events[0].event_type).toBe('intent')
+      expect(result.isValid).toBe(true)
     })
 
     it('should calculate confidence score correctly', async () => {
@@ -393,6 +410,59 @@ describe('OpenAIClient', () => {
       const result = await client.extractDataDictionary('Test input')
       
       expect(result.confidence).toBeGreaterThan(80) // High quality event should score well
+    })
+
+    it('should use uncertainty prompt for complex documents', async () => {
+      const progressUpdates: ProgressUpdate[] = []
+      const mockResponse = {
+        choices: [{
+          message: { 
+            content: JSON.stringify({
+              version: '1.0',
+              events: [{
+                event_name: 'complex_feature_used',
+                event_type: 'intent',
+                event_action_type: 'action',
+                event_purpose: 'Track usage of complex feature - uncertain about specific implementation details',
+                when_to_fire: 'When user interacts with feature',
+                actor: 'user',
+                object: 'feature',
+                context_surface: 'app',
+                properties: [],
+                lifecycle_status: 'proposed',
+                notes: 'Implementation details TBD - need to clarify tracking requirements'
+              }]
+            }),
+            role: 'assistant' 
+          },
+          finish_reason: 'stop'
+        }]
+      }
+      
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockResponse)
+      } as Response)
+
+      const result = await client.extractDataDictionary(
+        'This document contains TBD sections and uncertain requirements...',
+        { 
+          documentStructure: { 
+            complexity: 'high',
+            headings: [{ text: 'Test Heading', level: 1 }],
+            sections: [{ title: 'Test', content: 'test content' }],
+            estimatedReadingTime: 5
+          } 
+        },
+        (update) => progressUpdates.push(update)
+      )
+
+      // Should detect pressure test issues from the post-processor
+      expect(result.uncertainties.length).toBeGreaterThan(0)
+      expect(result.uncertainties.some(u => 
+        u.includes('Intent event with minimal context')
+      )).toBe(true)
+      expect(result.isValid).toBe(true)
     })
 
     it('should detect uncertainties in events', async () => {
