@@ -8,6 +8,7 @@ import type { ExportOptions } from '../lib/export/exportUtils'
 import { ExportUtils } from '../lib/export/exportUtils'
 import { ExportValidator } from '../lib/export/exportValidator'
 import type { ExportValidationResult, ImportResult } from '../lib/export/exportValidator'
+import { trackExport } from '../lib/analytics/usageTracker'
 
 interface ExportManagerProps {
   dictionary: DataDictionary
@@ -115,12 +116,18 @@ export default function ExportManager({
         alert(`Export completed with warnings:\n\n${result.warnings.join('\n')}`)
       }
       
+      // Track export success
+      trackExport(format, dictionary.events.length, true)
+      
       // Auto-validate the export  
       if (format === 'csv' || format === 'markdown') {
         handleValidateExport(result.data, format as 'csv' | 'markdown')
       }
       
     } catch (error) {
+      // Track export failure
+      trackExport(format, dictionary.events.length, false)
+      
       setExportState(prev => ({
         ...prev,
         isExporting: false,

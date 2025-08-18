@@ -1,15 +1,28 @@
 import { Link, Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { validateConfig } from './lib/config'
+import { analytics } from './lib/analytics/usageTracker'
+import AnalyticsPanel from './components/AnalyticsPanel'
 
 function App() {
   const [configErrors, setConfigErrors] = useState<string[]>([])
+  const [showAnalytics, setShowAnalytics] = useState(false)
 
   useEffect(() => {
     const { isValid, errors } = validateConfig()
     if (!isValid) {
       setConfigErrors(errors)
     }
+
+    // Track app initialization
+    analytics.track('app_loaded', {
+      config_valid: isValid,
+      config_errors_count: errors.length
+    })
+
+    // Track performance metrics
+    const loadTime = performance.now()
+    analytics.trackPerformance('page_load_time', loadTime)
   }, [])
   return (
     <div className="min-h-screen flex flex-col">
@@ -25,7 +38,7 @@ function App() {
             <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">(MVP)</span>
           </h1>
           <nav className="text-sm" aria-label="Main navigation">
-            <ul className="flex gap-4">
+            <ul className="flex gap-4 items-center">
               <li>
                 <Link 
                   className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline transition-colors" 
@@ -41,6 +54,15 @@ function App() {
                 >
                   About
                 </Link>
+              </li>
+              <li>
+                <button
+                  onClick={() => setShowAnalytics(true)}
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline transition-colors"
+                  aria-label="View usage analytics"
+                >
+                  📊 Analytics
+                </button>
               </li>
             </ul>
           </nav>
@@ -76,6 +98,15 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Analytics Panel Modal */}
+      {showAnalytics && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <AnalyticsPanel onClose={() => setShowAnalytics(false)} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

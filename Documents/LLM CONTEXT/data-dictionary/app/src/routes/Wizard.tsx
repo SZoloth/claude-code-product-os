@@ -1,4 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { trackWizardStep } from '../lib/analytics/usageTracker'
 
 const steps = [
   { path: '/', label: 'Describe' },
@@ -10,6 +12,14 @@ const steps = [
 
 export default function Wizard() {
   const { pathname } = useLocation()
+  
+  // Track wizard step navigation
+  useEffect(() => {
+    const currentStep = steps.find(step => step.path === pathname)
+    if (currentStep) {
+      trackWizardStep(currentStep.label.toLowerCase())
+    }
+  }, [pathname])
   
   return (
     <div className="content-section-lg">
