@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { DataDictionaryEvent } from '../../lib/schema/dataDictionary'
 import ExportManager from '../../components/ExportManager'
@@ -7,7 +7,7 @@ import { ProjectManager as PM } from '../../lib/storage/projectManager'
 
 export default function ExportStep() {
   const [isExportManagerOpen, setIsExportManagerOpen] = useState(false)
-  const [events, setEvents] = useState<DataDictionaryEvent[]>(() => {
+  const [events] = useState<DataDictionaryEvent[]>(() => {
     // Load from project or fallback to localStorage
     const project = PM.loadProject()
     if (project) {

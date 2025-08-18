@@ -2,10 +2,12 @@
  * ExportManager component - Handle all export functionality (CSV, Markdown, Datadog, JIRA)
  */
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import type { DataDictionary } from '../lib/schema/dataDictionary'
 import type { ExportOptions } from '../lib/export/exportUtils'
 import { ExportUtils } from '../lib/export/exportUtils'
+import { ExportValidator } from '../lib/export/exportValidator'
+import type { ExportValidationResult, ImportResult } from '../lib/export/exportValidator'
 
 interface ExportManagerProps {
   dictionary: DataDictionary
@@ -18,12 +20,16 @@ type ExportFormat = 'csv' | 'markdown' | 'datadog' | 'jira'
 interface ExportState {
   format: ExportFormat
   isExporting: boolean
+  isValidating: boolean
+  isImporting: boolean
   lastExport?: {
     format: ExportFormat
     filename: string
     timestamp: string
     size: string
   }
+  validationResult?: ExportValidationResult
+  importResult?: ImportResult
   error?: string
 }
 
@@ -34,8 +40,13 @@ export default function ExportManager({
 }: ExportManagerProps) {
   const [exportState, setExportState] = useState<ExportState>({
     format: 'csv',
-    isExporting: false
+    isExporting: false,
+    isValidating: false,
+    isImporting: false
   })
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [showValidation, setShowValidation] = useState(false)
   
   const [csvOptions, setCsvOptions] = useState<ExportOptions>({
     includeHeaders: true,
@@ -102,6 +113,11 @@ export default function ExportManager({
       // Show warnings if any (for CSV)
       if (result.warnings && result.warnings.length > 0) {
         alert(`Export completed with warnings:\n\n${result.warnings.join('\n')}`)
+      }
+      
+      // Auto-validate the export  
+      if (format === 'csv' || format === 'markdown') {
+        handleValidateExport(result.data, format as 'csv' | 'markdown')
       }
       
     } catch (error) {
@@ -209,6 +225,65 @@ export default function ExportManager({
     }
     
     return `${Math.round(size * 10) / 10} ${units[unitIndex]}`
+  }
+  
+  const handleValidateExport = async (exportData: string, format: 'csv' | 'markdown') => {
+    setExportState(prev => ({ ...prev, isValidating: true, validationResult: undefined }))
+    
+    try {
+      const validation = ExportValidator.validateExport(exportData, format)
+      setExportState(prev => ({ ...prev, isValidating: false, validationResult: validation }))
+    } catch (error) {
+      setExportState(prev => ({
+        ...prev,
+        isValidating: false,
+        error: `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }))
+    }
+  }
+  
+  const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    
+    setExportState(prev => ({ ...prev, isImporting: true, importResult: undefined, error: undefined }))
+    
+    try {
+      const text = await file.text()
+      let importResult: ImportResult
+      
+      if (file.name.endsWith('.csv')) {
+        importResult = ExportValidator.importFromCsv(text)
+      } else if (file.name.endsWith('.json')) {
+        importResult = ExportValidator.importFromJson(text)
+      } else {
+        throw new Error('Unsupported file format. Please use CSV or JSON files.')
+      }
+      
+      setExportState(prev => ({ ...prev, isImporting: false, importResult }))
+      
+      if (importResult.success && importResult.dictionary) {
+        // Show success and offer to load the imported data
+        const shouldLoad = confirm(`Import successful! ${importResult.importedEventCount} events imported. Load into editor?`)
+        if (shouldLoad) {
+          // Save to localStorage and refresh
+          localStorage.setItem('dataDictionary_events', JSON.stringify(importResult.events))
+          window.location.reload()
+        }
+      }
+      
+    } catch (error) {
+      setExportState(prev => ({
+        ...prev,
+        isImporting: false,
+        error: `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      }))
+    } finally {
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const getFormatDescription = (format: ExportFormat): string => {
@@ -395,16 +470,158 @@ export default function ExportManager({
             </button>
           </div>
         </div>
+        
+        {/* Import/Validation Actions */}
+        <div className="space-y-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            Import & Validation
+          </h4>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={exportState.isImporting}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 disabled:opacity-50 text-sm font-medium"
+            >
+              {exportState.isImporting ? 'Importing...' : '📥 Import CSV/JSON'}
+            </button>
+            
+            <button
+              onClick={() => setShowValidation(!showValidation)}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-medium"
+            >
+              {showValidation ? '🔍 Hide Validation' : '🔍 Show Validation'}
+            </button>
+          </div>
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,.json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+        </div>
 
         {/* Export Status */}
         {exportState.error && (
           <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
             <h5 className="text-sm font-medium text-red-900 dark:text-red-100 mb-1">
-              Export Error
+              Error
             </h5>
             <p className="text-sm text-red-800 dark:text-red-200">
               {exportState.error}
             </p>
+          </div>
+        )}
+        
+        {/* Import Results */}
+        {exportState.importResult && (
+          <div className={`p-3 rounded-md border ${
+            exportState.importResult.success
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+              : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+          }`}>
+            <h5 className={`text-sm font-medium mb-1 ${
+              exportState.importResult.success
+                ? 'text-green-900 dark:text-green-100'
+                : 'text-red-900 dark:text-red-100'
+            }`}>
+              {exportState.importResult.success ? '✅ Import Successful' : '❌ Import Failed'}
+            </h5>
+            <div className={`text-sm space-y-1 ${
+              exportState.importResult.success
+                ? 'text-green-800 dark:text-green-200'
+                : 'text-red-800 dark:text-red-200'
+            }`}>
+              <p>Format: {exportState.importResult.format.toUpperCase()}</p>
+              <p>Events: {exportState.importResult.importedEventCount}/{exportState.importResult.originalEventCount} imported</p>
+              {exportState.importResult.errors.length > 0 && (
+                <div>
+                  <p className="font-medium">Errors:</p>
+                  <ul className="list-disc list-inside ml-2">
+                    {exportState.importResult.errors.slice(0, 3).map((error, i) => (
+                      <li key={i}>{error}</li>
+                    ))}
+                    {exportState.importResult.errors.length > 3 && (
+                      <li>... and {exportState.importResult.errors.length - 3} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Validation Results */}
+        {showValidation && exportState.validationResult && (
+          <div className={`p-3 rounded-md border ${
+            exportState.validationResult.isValid
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+              : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+          }`}>
+            <h5 className={`text-sm font-medium mb-2 ${
+              exportState.validationResult.isValid
+                ? 'text-green-900 dark:text-green-100'
+                : 'text-yellow-900 dark:text-yellow-100'
+            }`}>
+              {exportState.validationResult.isValid ? '✅ Export Valid' : '⚠️ Export Issues'}
+            </h5>
+            
+            <div className={`text-sm space-y-2 ${
+              exportState.validationResult.isValid
+                ? 'text-green-800 dark:text-green-200'
+                : 'text-yellow-800 dark:text-yellow-200'
+            }`}>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="font-medium">Events:</p>
+                  <p>{exportState.validationResult.validEventCount}/{exportState.validationResult.eventCount} valid</p>
+                </div>
+                <div>
+                  <p className="font-medium">Format:</p>
+                  <p>{exportState.validationResult.format.toUpperCase()}</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="font-medium">Schema Compliance:</p>
+                <div className="ml-2 space-y-1">
+                  <p>Required Fields: {exportState.validationResult.schemaCompliance.hasRequiredFields ? '✅' : '❌'}</p>
+                  <p>Valid Naming: {exportState.validationResult.schemaCompliance.hasValidNaming ? '✅' : '❌'}</p>
+                  <p>Valid Enums: {exportState.validationResult.schemaCompliance.hasValidEnums ? '✅' : '❌'}</p>
+                  <p>CSV Compatible: {exportState.validationResult.schemaCompliance.csvCompatible ? '✅' : '❌'}</p>
+                </div>
+              </div>
+              
+              {exportState.validationResult.errors.length > 0 && (
+                <div>
+                  <p className="font-medium">Errors:</p>
+                  <ul className="list-disc list-inside ml-2">
+                    {exportState.validationResult.errors.slice(0, 3).map((error, i) => (
+                      <li key={i}>{error}</li>
+                    ))}
+                    {exportState.validationResult.errors.length > 3 && (
+                      <li>... and {exportState.validationResult.errors.length - 3} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+              
+              {exportState.validationResult.warnings.length > 0 && (
+                <div>
+                  <p className="font-medium">Warnings:</p>
+                  <ul className="list-disc list-inside ml-2">
+                    {exportState.validationResult.warnings.slice(0, 3).map((warning, i) => (
+                      <li key={i}>{warning}</li>
+                    ))}
+                    {exportState.validationResult.warnings.length > 3 && (
+                      <li>... and {exportState.validationResult.warnings.length - 3} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -450,10 +667,10 @@ export default function ExportManager({
 
         {/* Help Text */}
         <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1 pt-3 border-t border-gray-200 dark:border-gray-700">
-          <p><strong>CSV:</strong> Import into Excel, Google Sheets, or data analysis tools</p>
-          <p><strong>Markdown:</strong> Share as documentation or convert to PDF</p>
-          <p><strong>Datadog:</strong> Copy functions into your TypeScript application</p>
-          <p><strong>JIRA:</strong> Copy ticket descriptions for sprint planning</p>
+          <p><strong>Export:</strong> Download in CSV, Markdown, TypeScript, or JIRA formats</p>
+          <p><strong>Import:</strong> Load existing CSV or JSON files to continue editing</p>
+          <p><strong>Validation:</strong> Verify exports meet schema requirements</p>
+          <p><strong>Re-export:</strong> Make changes and export again with validation</p>
         </div>
       </div>
     </div>

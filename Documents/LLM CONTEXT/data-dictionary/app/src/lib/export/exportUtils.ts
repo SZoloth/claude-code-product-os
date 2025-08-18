@@ -3,7 +3,7 @@
  * Handles CSV, Markdown, Datadog, and JIRA exports
  */
 
-import type { DataDictionary, DataDictionaryEvent, EventProperty } from '../schema/dataDictionary'
+import type { DataDictionary, DataDictionaryEvent } from '../schema/dataDictionary'
 import { csvColumnSchema, getCsvColumnHeaders } from '../schema/jsonSchema'
 
 export interface ExportOptions {
@@ -54,8 +54,7 @@ export class ExportUtils {
     const {
       includeHeaders = true,
       includeEmptyColumns = true,
-      delimiter = ',',
-      validateSchema = true
+      delimiter = ','
     } = options
 
     const headers = getCsvColumnHeaders()
@@ -74,7 +73,8 @@ export class ExportUtils {
       // Map each column according to schema
       for (const header of headers) {
         const columnConfig = csvColumnSchema[header as keyof typeof csvColumnSchema]
-        let value = this.getEventFieldValue(event, header, columnConfig.serialized || false)
+        const isSerializedField = 'serialized' in columnConfig && columnConfig.serialized
+        let value = this.getEventFieldValue(event, header, isSerializedField || false)
 
         // Handle missing required fields
         if (!value && columnConfig.required) {
