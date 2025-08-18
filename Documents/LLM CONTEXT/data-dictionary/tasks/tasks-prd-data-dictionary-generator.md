@@ -16,6 +16,11 @@
 - `app/src/lib/llm/openaiClient.test.ts` - Unit tests for OpenAI client with retry logic.
 - `app/src/lib/llm/prompts.ts` - System/user prompts aligned to Section 12.
 - `app/src/lib/llm/prompts.test.ts` - Unit tests for prompt system functionality.
+- `app/src/lib/llm/postProcessor.ts` - Comprehensive post-processing of LLM output with normalization and validation.
+- `app/src/lib/llm/postProcessor.test.ts` - Unit tests for post-processor functionality.
+- `app/src/lib/llm/pressureTesting.test.ts` - Unit tests for pressure testing validation logic.
+- `app/src/lib/llm/datadogMapping.test.ts` - Unit tests for comprehensive Datadog API mapping logic.
+- `app/src/lib/llm/datadogSamples.ts` - Utility for generating Datadog implementation code samples.
 - `app/src/lib/config/index.ts` - Application configuration and environment management.
 - `app/src/lib/parsing/markdown.ts` - Markdown extraction → text with metadata.
 - `app/src/lib/parsing/docx.ts` - DOCX extraction → text using Mammoth.js.
@@ -69,31 +74,31 @@
   - [x] 2.5 Chunk + summarize flow for > ~60k characters; preserve key sections.
   - [x] 2.6 Error handling for unsupported files, size limits, and parsing failures.
 
-- [ ] 3.0 LLM transformation: prompt orchestration to generate event dictionary aligned to Section 12
+- [x] 3.0 LLM transformation: prompt orchestration to generate event dictionary aligned to Section 12
   - [x] 3.1 Implement system and user prompts following Section 12 (temperature 0.2).
   - [x] 3.2 Call OpenAI with timeouts and retries; expose progress states.
-  - [ ] 3.3 Post-process model output into normalized JSON structure.
-  - [ ] 3.4 Apply pressure-test rule; include `notes` questions when uncertain.
-  - [ ] 3.5 Map event_type and event_action_type to `datadog_api` defaults.
+  - [x] 3.3 Post-process model output into normalized JSON structure.
+  - [x] 3.4 Apply pressure-test rule; include `notes` questions when uncertain.
+  - [x] 3.5 Map event_type and event_action_type to `datadog_api` defaults.
 
-- [ ] 4.0 Schema and validation: implement Section 7 schema, naming conventions, and Datadog mapping fields
-  - [ ] 4.1 Define TypeScript types and JSON Schema for all fields in Section 7.
-  - [ ] 4.2 Enforce enums: event_type, event_action_type, lifecycle_status, property.type.
-  - [ ] 4.3 Validate uniqueness and snake_case for `event_name` and property names.
-  - [ ] 4.4 Validate failure events require `error_code`/`error_message` when present.
-  - [ ] 4.5 Build validator utilities and surface validation errors in UI.
+- [x] 4.0 Schema and validation: implement Section 7 schema, naming conventions, and Datadog mapping fields
+  - [x] 4.1 Define TypeScript types and JSON Schema for all fields in Section 7.
+  - [x] 4.2 Enforce enums: event_type, event_action_type, lifecycle_status, property.type.
+  - [x] 4.3 Validate uniqueness and snake_case for `event_name` and property names.
+  - [x] 4.4 Validate failure events require `error_code`/`error_message` when present.
+  - [x] 4.5 Build validator utilities and surface validation errors in UI.
 
-- [ ] 5.0 Editing and persistence: inline table editor, snapshot versions, local storage, import/export of project JSON
-  - [ ] 5.1 Implement events table: add/edit/delete events; inline fields.
-  - [ ] 5.2 Implement properties sub-table per event: name, type, required, example, description.
-  - [ ] 5.3 Add context_keys selection UI and validation hints.
-  - [ ] 5.4 Add snapshot on save; list and restore prior snapshots.
-  - [ ] 5.5 Local storage autosave; import/export project JSON.
+- [x] 5.0 Editing and persistence: inline table editor, snapshot versions, local storage, import/export of project JSON
+  - [x] 5.1 Implement events table: add/edit/delete events; inline fields.
+  - [x] 5.2 Implement properties sub-table per event: name, type, required, example, description.
+  - [x] 5.3 Add context_keys selection UI and validation hints.
+  - [x] 5.4 Add snapshot on save; list and restore prior snapshots.
+  - [x] 5.5 Local storage autosave; import/export project JSON.
 
-- [ ] 6.0 Export and integrations: CSV/Markdown outputs, Datadog JS stubs toggle, JIRA-ready ticket text
-  - [ ] 6.1 CSV export matching Section 7 columns; serialize `properties` as JSON.
-  - [ ] 6.2 Markdown summary with event table and brief rationale per event.
-  - [ ] 6.3 Datadog stubs generator: `addAction` for intent/success; `addError` for failure with error fields.
-  - [ ] 6.4 JIRA-ready ticket text with copy-to-clipboard; document manual attach flow.
-  - [ ] 6.5 Validate export against schema; re-open and re-export flows.
+- [x] 6.0 Export and integrations: CSV/Markdown outputs, Datadog JS stubs toggle, JIRA-ready ticket text
+  - [x] 6.1 CSV export matching Section 7 columns; serialize `properties` as JSON.
+  - [x] 6.2 Markdown summary with event table and brief rationale per event.
+  - [x] 6.3 Datadog stubs generator: `addAction` for intent/success; `addError` for failure with error fields.
+  - [x] 6.4 JIRA-ready ticket text with copy-to-clipboard; document manual attach flow.
+  - [x] 6.5 Validate export against schema; re-open and re-export flows.
 

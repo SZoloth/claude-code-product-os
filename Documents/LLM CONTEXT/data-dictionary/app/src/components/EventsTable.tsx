@@ -6,6 +6,7 @@ import { useState } from 'react'
 import type { DataDictionaryEvent, EventType, EventActionType, LifecycleStatus } from '../lib/schema/dataDictionary'
 import ValidatedField from './ValidatedField'
 import PropertiesTable from './PropertiesTable'
+import ContextKeysSelector from './ContextKeysSelector'
 import { ValidationUtils } from '../lib/schema/validationUtils'
 
 interface EventsTableProps {
@@ -300,12 +301,19 @@ export default function EventsTable({ events, onEventsChange, className = '' }: 
                   {expandedEventId === event.event_name && (
                     <tr>
                       <td colSpan={10} className="p-0 bg-gray-50 dark:bg-gray-800">
-                        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-6">
                           <PropertiesTable
                             properties={event.properties}
                             onPropertiesChange={(newProperties) => handlePropertiesChange(event.event_name, newProperties)}
                             eventName={event.event_name}
                           />
+                          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                            <ContextKeysSelector
+                              contextKeys={event.context_keys || []}
+                              properties={event.properties}
+                              onContextKeysChange={(newContextKeys) => updateEventField(event.event_name, 'context_keys', newContextKeys)}
+                            />
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -368,12 +376,19 @@ export default function EventsTable({ events, onEventsChange, className = '' }: 
             />
             {/* Properties section for mobile */}
             {expandedEventId === event.event_name && (
-              <div className="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+              <div className="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-4">
                 <PropertiesTable
                   properties={event.properties}
                   onPropertiesChange={(newProperties) => handlePropertiesChange(event.event_name, newProperties)}
                   eventName={event.event_name}
                 />
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <ContextKeysSelector
+                    contextKeys={event.context_keys || []}
+                    properties={event.properties}
+                    onContextKeysChange={(newContextKeys) => updateEventField(event.event_name, 'context_keys', newContextKeys)}
+                  />
+                </div>
               </div>
             )}
           </div>
