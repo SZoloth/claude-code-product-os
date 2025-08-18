@@ -4,14 +4,23 @@ import type { DataDictionaryEvent } from '../../lib/schema/dataDictionary'
 import EventsTable from '../../components/EventsTable'
 import ValidationBanner from '../../components/ValidationBanner'
 import SnapshotManager from '../../components/SnapshotManager'
+import ProjectManager from '../../components/ProjectManager'
+import { ProjectManager as PM } from '../../lib/storage/projectManager'
 
 export default function EditStep() {
   const navigate = useNavigate()
   const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false)
+  const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false)
   
-  // Mock initial events - in real app this would come from state management/API
+  // Load events from project or use default mock data
   const [events, setEvents] = useState<DataDictionaryEvent[]>(() => {
-    // Try to load from localStorage first
+    // Try to load from project first
+    const project = PM.loadProject()
+    if (project) {
+      return project.data.events
+    }
+
+    // Fallback to legacy localStorage
     const saved = localStorage.getItem('dataDictionary_events')
     if (saved) {
       try {
@@ -98,8 +107,12 @@ export default function EditStep() {
     ]
   })
 
-  // Auto-save to localStorage when events change
+  // Enhanced auto-save with project management
   useEffect(() => {
+    // Use new project manager for auto-save
+    PM.autoSave(events)
+    
+    // Keep legacy localStorage for backward compatibility
     localStorage.setItem('dataDictionary_events', JSON.stringify(events))
   }, [events])
 
@@ -107,6 +120,18 @@ export default function EditStep() {
   const handleRestoreSnapshot = (restoredEvents: DataDictionaryEvent[]) => {
     setEvents(restoredEvents)
   }
+
+  // Handle project load from import
+  const handleProjectLoad = (projectEvents: DataDictionaryEvent[]) => {
+    setEvents(projectEvents)
+  }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      PM.cleanup()
+    }
+  }, [])
 
   // Create mock DataDictionary for validation
   const dataDictionary = {
@@ -127,22 +152,43 @@ export default function EditStep() {
       {/* Validation Status */}
       <ValidationBanner dictionary={dataDictionary} />
 
-      {/* Snapshot Manager */}
-      <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-md p-4 border border-gray-200 dark:border-gray-700">
-        <div>
-          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
-            📸 Version Management
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            Save snapshots of your current work and restore previous versions
-          </p>
+      {/* Project & Version Management */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Project Manager */}
+        <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 rounded-md p-4 border border-blue-200 dark:border-blue-700">
+          <div>
+            <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+              📁 Project Management
+            </h3>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Auto-save, import/export, and project settings
+            </p>
+          </div>
+          <button
+            onClick={() => setIsProjectManagerOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+          >
+            Manage Project
+          </button>
         </div>
-        <button
-          onClick={() => setIsSnapshotManagerOpen(true)}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-sm font-medium"
-        >
-          Manage Snapshots
-        </button>
+
+        {/* Snapshot Manager */}
+        <div className="flex items-center justify-between bg-purple-50 dark:bg-purple-900/20 rounded-md p-4 border border-purple-200 dark:border-purple-700">
+          <div>
+            <h3 className="text-sm font-medium text-purple-900 dark:text-purple-100 mb-1">
+              📸 Version Snapshots
+            </h3>
+            <p className="text-sm text-purple-700 dark:text-purple-300">
+              Save snapshots and restore previous versions
+            </p>
+          </div>
+          <button
+            onClick={() => setIsSnapshotManagerOpen(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-sm font-medium"
+          >
+            Manage Snapshots
+          </button>
+        </div>
       </div>
 
       {/* Editing Best Practices */}
@@ -173,6 +219,19 @@ export default function EditStep() {
           Back
         </Link>
       </div>
+
+      {/* Project Manager Modal */}
+      {isProjectManagerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <ProjectManager
+              events={events}
+              onProjectLoad={handleProjectLoad}
+              onClose={() => setIsProjectManagerOpen(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Snapshot Manager Modal */}
       {isSnapshotManagerOpen && (
