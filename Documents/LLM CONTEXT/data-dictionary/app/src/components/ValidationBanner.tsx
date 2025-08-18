@@ -2,7 +2,7 @@
  * ValidationBanner component for displaying validation status and errors
  */
 
-import { DataDictionary } from '../lib/schema/dataDictionary'
+import type { DataDictionary } from '../lib/schema/dataDictionary'
 import { ValidationUtils } from '../lib/schema/validationUtils'
 
 interface ValidationBannerProps {
@@ -136,7 +136,8 @@ export default function ValidationBanner({ dictionary, className = '' }: Validat
 
 // Helper function to extract private methods for testing (hack for demo purposes)
 // In production, these would be public static methods
-const privateMethodsForTesting = {
-  extractEventName: ValidationUtils['extractEventName'] as any,
-  formatErrorMessage: ValidationUtils['formatErrorMessage'] as any
-}
+// Note: Commented out to avoid unused variable error
+// const privateMethodsForTesting = {
+//   extractEventName: ValidationUtils['extractEventName'] as any,
+//   formatErrorMessage: ValidationUtils['formatErrorMessage'] as any
+// }

@@ -1,7 +1,97 @@
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import type { DataDictionaryEvent } from '../../lib/schema/dataDictionary'
+import EventsTable from '../../components/EventsTable'
+import ValidationBanner from '../../components/ValidationBanner'
 
 export default function EditStep() {
   const navigate = useNavigate()
+  
+  // Mock initial events - in real app this would come from state management/API
+  const [events, setEvents] = useState<DataDictionaryEvent[]>(() => {
+    // Try to load from localStorage first
+    const saved = localStorage.getItem('dataDictionary_events')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.warn('Failed to parse saved events:', e)
+      }
+    }
+    
+    // Default mock events
+    return [
+      {
+        event_name: 'product_viewed',
+        event_type: 'intent',
+        event_action_type: 'action',
+        event_purpose: 'Track when users view product detail pages to understand product interest and optimize conversion funnel',
+        when_to_fire: 'When a user navigates to or loads a product detail page',
+        actor: 'user',
+        object: 'product',
+        context_surface: 'product_detail_page',
+        properties: [
+          {
+            name: 'product_id',
+            type: 'string',
+            required: true,
+            example: 'prod_123',
+            description: 'Unique identifier for the viewed product'
+          },
+          {
+            name: 'category',
+            type: 'string',
+            required: false,
+            example: 'electronics',
+            description: 'Product category for segmentation'
+          }
+        ],
+        lifecycle_status: 'approved',
+        datadog_api: 'addAction'
+      },
+      {
+        event_name: 'checkout_completed',
+        event_type: 'success',
+        event_action_type: 'action',
+        event_purpose: 'Track successful checkout completion to measure conversion and revenue',
+        when_to_fire: 'When a user successfully completes the checkout process and payment is confirmed',
+        actor: 'user',
+        object: 'order',
+        context_surface: 'checkout_page',
+        properties: [
+          {
+            name: 'order_id',
+            type: 'string',
+            required: true,
+            example: 'ord_456',
+            description: 'Unique identifier for the completed order'
+          },
+          {
+            name: 'total_amount',
+            type: 'number',
+            required: true,
+            example: 99.99,
+            description: 'Total order amount in dollars'
+          }
+        ],
+        lifecycle_status: 'implemented',
+        datadog_api: 'addAction'
+      }
+    ]
+  })
+
+  // Auto-save to localStorage when events change
+  useEffect(() => {
+    localStorage.setItem('dataDictionary_events', JSON.stringify(events))
+  }, [events])
+
+  // Create mock DataDictionary for validation
+  const dataDictionary = {
+    version: '1.0.0',
+    generatedAtIso: new Date().toISOString(),
+    events
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -11,10 +101,13 @@ export default function EditStep() {
         </p>
       </div>
 
+      {/* Validation Status */}
+      <ValidationBanner dictionary={dataDictionary} />
+
       {/* Editing Best Practices */}
-      <div className="bg-green-50 border border-green-200 rounded-md p-4">
-        <h3 className="text-sm font-medium text-green-900 mb-2">✏️ Editing Best Practices</h3>
-        <div className="text-sm text-green-800 space-y-1">
+      <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md p-4">
+        <h3 className="text-sm font-medium text-green-900 dark:text-green-100 mb-2">✏️ Editing Best Practices</h3>
+        <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
           <p><strong>Event naming:</strong> Use consistent snake_case (e.g., product_viewed, checkout_completed)</p>
           <p><strong>Properties:</strong> Include user context, session info, and relevant business data</p>
           <p><strong>Required fields:</strong> Mark critical properties as required for data quality</p>
@@ -22,19 +115,20 @@ export default function EditStep() {
         </div>
       </div>
 
-      {/* Placeholder for inline editor */}
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-        <div className="text-gray-500">
-          <div className="text-lg mb-2">📝 Table Editor</div>
-          <p className="text-sm">Inline event/property editor will appear here</p>
-          <p className="text-xs mt-2">Coming in Task 5.x - Editing and persistence</p>
-        </div>
-      </div>
+      {/* Events Table Editor */}
+      <EventsTable 
+        events={events}
+        onEventsChange={setEvents}
+      />
+
       <div className="flex items-center gap-3">
-        <button className="px-4 py-2 rounded-md bg-gray-900 text-white" onClick={() => navigate('/export')}>
+        <button 
+          className="px-4 py-2 rounded-md bg-gray-900 text-white hover:bg-gray-800" 
+          onClick={() => navigate('/export')}
+        >
           Next: Export
         </button>
-        <Link to="/preview" className="text-sm underline">
+        <Link to="/preview" className="text-sm underline hover:text-blue-600">
           Back
         </Link>
       </div>
