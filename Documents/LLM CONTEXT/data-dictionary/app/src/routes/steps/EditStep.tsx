@@ -3,9 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { DataDictionaryEvent } from '../../lib/schema/dataDictionary'
 import EventsTable from '../../components/EventsTable'
 import ValidationBanner from '../../components/ValidationBanner'
+import SnapshotManager from '../../components/SnapshotManager'
 
 export default function EditStep() {
   const navigate = useNavigate()
+  const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false)
   
   // Mock initial events - in real app this would come from state management/API
   const [events, setEvents] = useState<DataDictionaryEvent[]>(() => {
@@ -46,6 +48,7 @@ export default function EditStep() {
             description: 'Product category for segmentation'
           }
         ],
+        context_keys: ['product_id'],
         lifecycle_status: 'approved',
         datadog_api: 'addAction'
       },
@@ -72,8 +75,23 @@ export default function EditStep() {
             required: true,
             example: 99.99,
             description: 'Total order amount in dollars'
+          },
+          {
+            name: 'payment_method',
+            type: 'string',
+            required: false,
+            example: 'credit_card',
+            description: 'Method used for payment'
+          },
+          {
+            name: 'currency',
+            type: 'string',
+            required: true,
+            example: 'USD',
+            description: 'Currency code for the transaction'
           }
         ],
+        context_keys: ['order_id', 'total_amount', 'currency'],
         lifecycle_status: 'implemented',
         datadog_api: 'addAction'
       }
@@ -84,6 +102,11 @@ export default function EditStep() {
   useEffect(() => {
     localStorage.setItem('dataDictionary_events', JSON.stringify(events))
   }, [events])
+
+  // Handle snapshot restore
+  const handleRestoreSnapshot = (restoredEvents: DataDictionaryEvent[]) => {
+    setEvents(restoredEvents)
+  }
 
   // Create mock DataDictionary for validation
   const dataDictionary = {
@@ -103,6 +126,24 @@ export default function EditStep() {
 
       {/* Validation Status */}
       <ValidationBanner dictionary={dataDictionary} />
+
+      {/* Snapshot Manager */}
+      <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-md p-4 border border-gray-200 dark:border-gray-700">
+        <div>
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
+            📸 Version Management
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Save snapshots of your current work and restore previous versions
+          </p>
+        </div>
+        <button
+          onClick={() => setIsSnapshotManagerOpen(true)}
+          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-sm font-medium"
+        >
+          Manage Snapshots
+        </button>
+      </div>
 
       {/* Editing Best Practices */}
       <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-md p-4">
@@ -132,6 +173,19 @@ export default function EditStep() {
           Back
         </Link>
       </div>
+
+      {/* Snapshot Manager Modal */}
+      {isSnapshotManagerOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-hidden">
+            <SnapshotManager
+              events={events}
+              onRestoreSnapshot={handleRestoreSnapshot}
+              onClose={() => setIsSnapshotManagerOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
