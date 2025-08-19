@@ -6,6 +6,7 @@ import App from './App.tsx'
 
 import Wizard from './routes/Wizard.tsx'
 import About from './routes/About.tsx'
+import DashboardRoute from './routes/DashboardRoute.tsx'
 import DescribeStep from './routes/steps/DescribeStep.tsx'
 import JourneysStep from './routes/steps/JourneysStep.tsx'
 import PreviewStep from './routes/steps/PreviewStep.tsx'
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: 'about', element: <About /> },
+      { path: 'dashboard', element: <DashboardRoute /> },
     ],
   },
 ])

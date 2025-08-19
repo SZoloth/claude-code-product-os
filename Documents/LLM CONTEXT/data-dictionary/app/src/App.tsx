@@ -109,6 +109,14 @@ function App() {
                 <li>
                   <Link 
                     className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded" 
+                    to="/dashboard"
+                  >
+                    📊 Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded" 
                     to="/about"
                   >
                     About

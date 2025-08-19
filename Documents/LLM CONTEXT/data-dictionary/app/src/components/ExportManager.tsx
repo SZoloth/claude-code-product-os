@@ -9,6 +9,14 @@ import { ExportUtils } from '../lib/export/exportUtils'
 import { ExportValidator } from '../lib/export/exportValidator'
 import type { ExportValidationResult, ImportResult } from '../lib/export/exportValidator'
 import { trackExport } from '../lib/analytics/usageTracker'
+import { ExcelExporter } from '../lib/export/excelExport'
+import { JsonSchemaExporter } from '../lib/export/jsonSchemaExport'
+import { OpenApiExporter } from '../lib/export/openApiExport'
+import { SlackExporter } from '../lib/export/slackExport'
+import { EmailExporter } from '../lib/export/emailExport'
+import { PdfExporter } from '../lib/export/pdfExport'
+import { PostmanExporter } from '../lib/export/postmanExport'
+import { SqlExporter } from '../lib/export/sqlExport'
 
 interface ExportManagerProps {
   dictionary: DataDictionary
@@ -16,7 +24,7 @@ interface ExportManagerProps {
   className?: string
 }
 
-type ExportFormat = 'csv' | 'markdown' | 'datadog' | 'jira'
+type ExportFormat = 'csv' | 'markdown' | 'datadog' | 'jira' | 'excel' | 'json-schema' | 'openapi' | 'slack' | 'email' | 'pdf' | 'postman' | 'sql'
 
 interface ExportState {
   format: ExportFormat
@@ -58,6 +66,16 @@ export default function ExportManager({
   })
 
   const [selectedFormats, setSelectedFormats] = useState<Set<ExportFormat>>(new Set(['csv']))
+  const [advancedOptions, setAdvancedOptions] = useState({
+    excel: { includeMetadata: true, includeValidationSheet: true },
+    jsonSchema: { includeExamples: true, strictMode: false },
+    openapi: { includeExamples: true, generatePaths: true },
+    slack: { includeBlocks: true, includeStatistics: true },
+    email: { format: 'both' as 'html' | 'text' | 'both', templateStyle: 'formal' as 'formal' | 'casual' | 'technical' },
+    pdf: { includeTableOfContents: true, includeStatistics: true },
+    postman: { includeExamples: true, includeTests: true },
+    sql: { dialect: 'postgresql' as 'postgresql' | 'mysql' | 'sqlite' | 'bigquery', includeIndexes: true }
+  })
 
   const handleSingleExport = async (format: ExportFormat) => {
     setExportState(prev => ({ ...prev, isExporting: true, error: undefined }))
@@ -85,6 +103,53 @@ export default function ExportManager({
         case 'jira':
           result = ExportUtils.exportToJira(dictionary)
           blob = new Blob([result.data], { type: 'text/plain' })
+          break
+
+        case 'excel':
+          result = await ExcelExporter.exportToExcel(dictionary, advancedOptions.excel)
+          // Convert base64 to blob
+          const excelData = atob(result.data)
+          const excelBytes = new Uint8Array(excelData.length)
+          for (let i = 0; i < excelData.length; i++) {
+            excelBytes[i] = excelData.charCodeAt(i)
+          }
+          blob = new Blob([excelBytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+          break
+
+        case 'json-schema':
+          result = JsonSchemaExporter.exportToJsonSchema(dictionary, advancedOptions.jsonSchema)
+          blob = new Blob([JSON.stringify(result.schema, null, 2)], { type: 'application/json' })
+          break
+
+        case 'openapi':
+          result = OpenApiExporter.exportToOpenApi(dictionary, advancedOptions.openapi)
+          blob = new Blob([JSON.stringify(result.spec, null, 2)], { type: 'application/json' })
+          break
+
+        case 'slack':
+          result = SlackExporter.exportToSlack(dictionary, advancedOptions.slack)
+          blob = new Blob([JSON.stringify(result.payload, null, 2)], { type: 'application/json' })
+          break
+
+        case 'email':
+          result = EmailExporter.exportToEmail(dictionary, advancedOptions.email)
+          const emailContent = result.htmlContent || result.textContent || ''
+          blob = new Blob([emailContent], { type: result.htmlContent ? 'text/html' : 'text/plain' })
+          break
+
+        case 'pdf':
+          result = PdfExporter.exportToPdf(dictionary, advancedOptions.pdf)
+          blob = new Blob([JSON.stringify(result.content, null, 2)], { type: 'application/json' })
+          break
+
+        case 'postman':
+          result = PostmanExporter.exportToPostman(dictionary, advancedOptions.postman)
+          blob = new Blob([JSON.stringify(result.collection, null, 2)], { type: 'application/json' })
+          break
+
+        case 'sql':
+          result = SqlExporter.exportToSql(dictionary, advancedOptions.sql)
+          blob = new Blob([result.ddl], { type: 'text/plain' })
           break
           
         default:
@@ -164,6 +229,52 @@ export default function ExportManager({
             
           case 'jira':
             result = ExportUtils.exportToJira(dictionary)
+            type = 'text/plain'
+            break
+
+          case 'excel':
+            result = await ExcelExporter.exportToExcel(dictionary, advancedOptions.excel)
+            type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            break
+
+          case 'json-schema':
+            result = JsonSchemaExporter.exportToJsonSchema(dictionary, advancedOptions.jsonSchema)
+            result.data = JSON.stringify(result.schema, null, 2)
+            type = 'application/json'
+            break
+
+          case 'openapi':
+            result = OpenApiExporter.exportToOpenApi(dictionary, advancedOptions.openapi)
+            result.data = JSON.stringify(result.spec, null, 2)
+            type = 'application/json'
+            break
+
+          case 'slack':
+            result = SlackExporter.exportToSlack(dictionary, advancedOptions.slack)
+            result.data = JSON.stringify(result.payload, null, 2)
+            type = 'application/json'
+            break
+
+          case 'email':
+            result = EmailExporter.exportToEmail(dictionary, advancedOptions.email)
+            result.data = result.htmlContent || result.textContent || ''
+            type = result.htmlContent ? 'text/html' : 'text/plain'
+            break
+
+          case 'pdf':
+            result = PdfExporter.exportToPdf(dictionary, advancedOptions.pdf)
+            result.data = JSON.stringify(result.content, null, 2)
+            type = 'application/json'
+            break
+
+          case 'postman':
+            result = PostmanExporter.exportToPostman(dictionary, advancedOptions.postman)
+            result.data = JSON.stringify(result.collection, null, 2)
+            type = 'application/json'
+            break
+
+          case 'sql':
+            result = SqlExporter.exportToSql(dictionary, advancedOptions.sql)
             type = 'text/plain'
             break
         }
@@ -303,6 +414,22 @@ export default function ExportManager({
         return 'TypeScript implementation stubs for Datadog RUM integration'
       case 'jira':
         return 'JIRA-ready ticket descriptions for implementation planning'
+      case 'excel':
+        return 'Multi-sheet Excel workbook with advanced formatting and validation'
+      case 'json-schema':
+        return 'JSON Schema definitions for API documentation and validation'
+      case 'openapi':
+        return 'OpenAPI 3.0 specification for REST API documentation'
+      case 'slack':
+        return 'Slack-formatted messages and webhook payloads'
+      case 'email':
+        return 'HTML and text email templates for stakeholder communication'
+      case 'pdf':
+        return 'Professional PDF reports with charts and detailed documentation'
+      case 'postman':
+        return 'Postman collections for API testing and development'
+      case 'sql':
+        return 'SQL DDL scripts for database schema creation'
       default:
         return ''
     }
@@ -314,6 +441,14 @@ export default function ExportManager({
       case 'markdown': return '📝'
       case 'datadog': return '🐕'
       case 'jira': return '🎫'
+      case 'excel': return '📊'
+      case 'json-schema': return '🔧'
+      case 'openapi': return '🔌'
+      case 'slack': return '💬'
+      case 'email': return '📧'
+      case 'pdf': return '📄'
+      case 'postman': return '🚀'
+      case 'sql': return '🗄️'
       default: return '📄'
     }
   }
@@ -355,8 +490,8 @@ export default function ExportManager({
             Export Formats
           </h4>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(['csv', 'markdown', 'datadog', 'jira'] as ExportFormat[]).map((format) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {(['csv', 'markdown', 'datadog', 'jira', 'excel', 'json-schema', 'openapi', 'slack', 'email', 'pdf', 'postman', 'sql'] as ExportFormat[]).map((format) => (
               <div
                 key={format}
                 className={`border rounded-lg p-4 cursor-pointer transition-colors ${
@@ -453,6 +588,159 @@ export default function ExportManager({
                 </select>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Advanced Export Options */}
+        {(selectedFormats.has('excel') || selectedFormats.has('json-schema') || selectedFormats.has('openapi') || 
+          selectedFormats.has('slack') || selectedFormats.has('email') || selectedFormats.has('pdf') || 
+          selectedFormats.has('postman') || selectedFormats.has('sql')) && (
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              Advanced Options
+            </h4>
+            
+            {/* Excel Options */}
+            {selectedFormats.has('excel') && (
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+                <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">📊 Excel Options</h5>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Include Metadata</span>
+                    <input
+                      type="checkbox"
+                      checked={advancedOptions.excel.includeMetadata}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        excel: { ...prev.excel, includeMetadata: e.target.checked }
+                      }))}
+                      className="rounded"
+                    />
+                  </label>
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Validation Sheet</span>
+                    <input
+                      type="checkbox"
+                      checked={advancedOptions.excel.includeValidationSheet}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        excel: { ...prev.excel, includeValidationSheet: e.target.checked }
+                      }))}
+                      className="rounded"
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* SQL Options */}
+            {selectedFormats.has('sql') && (
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+                <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">🗃️ SQL Options</h5>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Database</span>
+                    <select
+                      value={advancedOptions.sql.dialect}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        sql: { ...prev.sql, dialect: e.target.value as any }
+                      }))}
+                      className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900"
+                    >
+                      <option value="postgresql">PostgreSQL</option>
+                      <option value="mysql">MySQL</option>
+                      <option value="sqlite">SQLite</option>
+                      <option value="bigquery">BigQuery</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Include Indexes</span>
+                    <input
+                      type="checkbox"
+                      checked={advancedOptions.sql.includeIndexes}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        sql: { ...prev.sql, includeIndexes: e.target.checked }
+                      }))}
+                      className="rounded"
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Email Options */}
+            {selectedFormats.has('email') && (
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+                <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">📧 Email Options</h5>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Format</span>
+                    <select
+                      value={advancedOptions.email.format}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        email: { ...prev.email, format: e.target.value as any }
+                      }))}
+                      className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900"
+                    >
+                      <option value="html">HTML</option>
+                      <option value="text">Text</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </label>
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Style</span>
+                    <select
+                      value={advancedOptions.email.templateStyle}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        email: { ...prev.email, templateStyle: e.target.value as any }
+                      }))}
+                      className="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-900"
+                    >
+                      <option value="formal">Formal</option>
+                      <option value="casual">Casual</option>
+                      <option value="technical">Technical</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* JSON Schema Options */}
+            {selectedFormats.has('json-schema') && (
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+                <h5 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">🔧 JSON Schema Options</h5>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Include Examples</span>
+                    <input
+                      type="checkbox"
+                      checked={advancedOptions.jsonSchema.includeExamples}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        jsonSchema: { ...prev.jsonSchema, includeExamples: e.target.checked }
+                      }))}
+                      className="rounded"
+                    />
+                  </label>
+                  <label className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Strict Mode</span>
+                    <input
+                      type="checkbox"
+                      checked={advancedOptions.jsonSchema.strictMode}
+                      onChange={(e) => setAdvancedOptions(prev => ({
+                        ...prev,
+                        jsonSchema: { ...prev.jsonSchema, strictMode: e.target.checked }
+                      }))}
+                      className="rounded"
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -668,6 +956,38 @@ export default function ExportManager({
             <div className="flex justify-between">
               <span>🎫 JIRA:</span>
               <span>{dictionary.events.length} implementation tickets</span>
+            </div>
+            <div className="flex justify-between">
+              <span>📊 Excel:</span>
+              <span>Multi-sheet workbook with validation</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🔧 JSON Schema:</span>
+              <span>API validation schemas</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🔌 OpenAPI:</span>
+              <span>REST API specification</span>
+            </div>
+            <div className="flex justify-between">
+              <span>💬 Slack:</span>
+              <span>Team communication templates</span>
+            </div>
+            <div className="flex justify-between">
+              <span>📧 Email:</span>
+              <span>Stakeholder notification templates</span>
+            </div>
+            <div className="flex justify-between">
+              <span>📄 PDF:</span>
+              <span>Professional documentation report</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🚀 Postman:</span>
+              <span>API testing collection</span>
+            </div>
+            <div className="flex justify-between">
+              <span>🗄️ SQL:</span>
+              <span>Database schema scripts</span>
             </div>
           </div>
         </div>

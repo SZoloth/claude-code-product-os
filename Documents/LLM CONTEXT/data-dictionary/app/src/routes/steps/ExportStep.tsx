@@ -64,7 +64,8 @@ export default function ExportStep() {
       </div>
 
       {/* Export Options Preview */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Core Formats */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg">📊</span>
@@ -122,6 +123,39 @@ export default function ExportStep() {
             <p>• {events.length} implementation tickets</p>
             <p>• Acceptance criteria & tech specs</p>
             <p>• Story point estimates included</p>
+          </div>
+        </div>
+
+        {/* Advanced Formats */}
+        <div className="border border-blue-200 dark:border-blue-700 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">📈</span>
+            <h3 className="font-medium text-blue-900 dark:text-blue-100">Excel Workbook</h3>
+            <span className="text-xs bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">NEW</span>
+          </div>
+          <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+            Multi-sheet workbook with validation, charts, and professional formatting
+          </p>
+          <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+            <p>• Multiple sheets with formatting</p>
+            <p>• Data validation rules</p>
+            <p>• Summary statistics</p>
+          </div>
+        </div>
+
+        <div className="border border-green-200 dark:border-green-700 rounded-lg p-4 bg-green-50 dark:bg-green-900/20">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">🔗</span>
+            <h3 className="font-medium text-green-900 dark:text-green-100">API Specs</h3>
+            <span className="text-xs bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded">NEW</span>
+          </div>
+          <p className="text-sm text-green-800 dark:text-green-200 mb-3">
+            OpenAPI 3.0 specs, JSON Schema definitions, and Postman collections
+          </p>
+          <div className="text-xs text-green-700 dark:text-green-300 space-y-1">
+            <p>• REST API documentation</p>
+            <p>• Testing collections</p>
+            <p>• Schema validation</p>
           </div>
         </div>
       </div>
