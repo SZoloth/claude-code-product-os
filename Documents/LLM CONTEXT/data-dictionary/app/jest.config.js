@@ -11,6 +11,9 @@ export default {
       useESM: true,
       tsconfig: {
         module: 'ESNext',
+        jsx: 'react-jsx',
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
       },
     }],
   },

@@ -3,6 +3,7 @@
  */
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import ExportManager from './ExportManager'
 import type { DataDictionary } from '../lib/schema/dataDictionary'
 
@@ -82,8 +83,9 @@ global.URL.revokeObjectURL = jest.fn()
 
 // Mock HTMLAnchorElement click
 const mockClick = jest.fn()
+const originalCreateElement = document.createElement
 jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
-  const element = document.createElement.wrappedMethod(tagName)
+  const element = originalCreateElement.call(document, tagName)
   if (tagName === 'a') {
     element.click = mockClick
   }
