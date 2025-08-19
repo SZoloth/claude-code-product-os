@@ -112,7 +112,7 @@ export class EmailExporter {
   static generateWeeklyDigest(
     dictionary: DataDictionary,
     changedEvents: DataDictionaryEvent[] = [],
-    options: EmailExportOptions = {}
+    _options: EmailExportOptions = {}
   ): EmailExportResult {
     const subject = `Weekly Analytics Events Digest - ${new Date().toLocaleDateString()}`
     const stats = this.generateStatistics(dictionary.events)
@@ -133,10 +133,10 @@ export class EmailExporter {
     }
   }
 
-  private static generateSubject(dictionary: DataDictionary, style: string): string {
+  private static generateSubject(dictionary: DataDictionary, _style: string): string {
     const eventCount = dictionary.events.length
     
-    switch (style) {
+    switch (_style) {
       case 'casual':
         return `📊 Data Dictionary Update - ${eventCount} events ready to go!`
       case 'technical':
@@ -148,10 +148,10 @@ export class EmailExporter {
 
   private static generateHtmlContent(
     dictionary: DataDictionary,
-    stats: any,
+_stats: any,
     options: any
   ): string {
-    const { includeHeader, includeFooter, includeStatistics, maxEventsInEmail, templateStyle } = options
+    const { includeHeader, includeFooter, includeStatistics, maxEventsInEmail, templateStyle: _templateStyle } = options
     
     let html = `
 <!DOCTYPE html>
@@ -271,7 +271,7 @@ export class EmailExporter {
 
   private static generateTextContent(
     dictionary: DataDictionary,
-    stats: any,
+_stats: any,
     options: any
   ): string {
     const { includeHeader, includeFooter, includeStatistics, maxEventsInEmail } = options
@@ -340,7 +340,7 @@ export class EmailExporter {
     return text
   }
 
-  private static generateNewEventsHtml(events: DataDictionaryEvent[], style: string): string {
+  private static generateNewEventsHtml(events: DataDictionaryEvent[], _style: string): string {
     let html = `
 <!DOCTYPE html>
 <html>
@@ -375,7 +375,7 @@ export class EmailExporter {
     return html
   }
 
-  private static generateNewEventsText(events: DataDictionaryEvent[], style: string): string {
+  private static generateNewEventsText(events: DataDictionaryEvent[], _style: string): string {
     let text = `NEW ANALYTICS EVENTS\n`
     text += `====================\n\n`
     text += `${events.length} new events have been added to the data dictionary:\n\n`
@@ -394,18 +394,18 @@ export class EmailExporter {
   }
 
   private static generateDigestHtml(
-    dictionary: DataDictionary,
-    changedEvents: DataDictionaryEvent[],
-    stats: any
+    _dictionary: DataDictionary,
+    _changedEvents: DataDictionaryEvent[],
+_stats: any
   ): string {
     // Implementation for weekly digest HTML
     return `<!DOCTYPE html><html><body><h1>Weekly Digest</h1><p>Summary content...</p></body></html>`
   }
 
   private static generateDigestText(
-    dictionary: DataDictionary,
-    changedEvents: DataDictionaryEvent[],
-    stats: any
+    _dictionary: DataDictionary,
+    _changedEvents: DataDictionaryEvent[],
+_stats: any
   ): string {
     // Implementation for weekly digest text
     return `WEEKLY DIGEST\n=============\n\nSummary content...`
@@ -423,7 +423,7 @@ export class EmailExporter {
     }
   }
 
-  private static getRecipientSuggestions(dictionary: DataDictionary): string[] {
+  private static getRecipientSuggestions(_dictionary: DataDictionary): string[] {
     return [
       'analytics-team@company.com',
       'engineering@company.com',

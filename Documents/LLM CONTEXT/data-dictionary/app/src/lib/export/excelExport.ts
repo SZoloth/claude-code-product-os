@@ -36,7 +36,7 @@ export class ExcelExporter {
       includeValidationSheet = true,
       groupByCategory = false,
       formatHeaders = true,
-      addDataValidation = true
+      addDataValidation: _addDataValidation = true
     } = options
 
     // Create workbook structure

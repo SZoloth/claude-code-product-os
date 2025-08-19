@@ -23,7 +23,7 @@ interface MetricCard {
 
 export default function Dashboard({ dictionary, className = '' }: DashboardProps) {
   const [selectedTab, setSelectedTab] = useState<'overview' | 'events' | 'properties' | 'insights'>('overview')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
 
   const metrics = useMemo(() => {
     const events = dictionary.events
@@ -46,7 +46,7 @@ export default function Dashboard({ dictionary, className = '' }: DashboardProps
         value: totalEvents,
         subtitle: 'Defined events',
         icon: '📊',
-        trend: 'stable'
+        trend: 'stable' as const
       },
       {
         title: 'Implementation Rate',
@@ -60,7 +60,7 @@ export default function Dashboard({ dictionary, className = '' }: DashboardProps
         value: avgPropertiesPerEvent,
         subtitle: `${totalProperties} total properties`,
         icon: '🔧',
-        trend: 'stable'
+        trend: 'stable' as const
       },
       {
         title: 'Documentation',

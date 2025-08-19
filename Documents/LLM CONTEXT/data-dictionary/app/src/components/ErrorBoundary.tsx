@@ -3,7 +3,7 @@
  * Provides graceful error recovery and user-friendly error reporting
  */
 
-import { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { trackPerformance } from '../lib/analytics/usageTracker'
 
 interface Props {
@@ -234,7 +234,7 @@ export function withErrorBoundary<P extends object>(
 
 // Hook for manually triggering error boundary
 export function useErrorHandler() {
-  const handleError = (error: Error, errorInfo?: ErrorInfo) => {
+  const handleError = (error: Error, _errorInfo?: ErrorInfo) => {
     // Force a re-render that will trigger the error boundary
     throw error
   }

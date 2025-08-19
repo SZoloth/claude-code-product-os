@@ -13,12 +13,6 @@ interface ChartProps {
   width?: number
 }
 
-interface ChartDataPoint {
-  label: string
-  value: number
-  color: string
-  percentage: number
-}
 
 // Color palettes for charts
 const EVENT_TYPE_COLORS = {
@@ -77,7 +71,7 @@ export function PieChart({ data, className = '', height = 300, width = 300, grou
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
         <title>Distribution of {groupBy.replace('_', ' ')}</title>
         
-        {chartData.map((item, index) => {
+        {chartData.map((item) => {
           const angle = (item.value / data.length) * 2 * Math.PI
           const endAngle = currentAngle + angle
           
@@ -211,7 +205,7 @@ export function BarChart({ data, className = '', height = 300, width = 400, grou
         />
         
         {/* Y-axis labels */}
-        {[0, Math.ceil(maxValue / 4), Math.ceil(maxValue / 2), Math.ceil(maxValue * 3/4), maxValue].map((value, index) => {
+        {[0, Math.ceil(maxValue / 4), Math.ceil(maxValue / 2), Math.ceil(maxValue * 3/4), maxValue].map((value) => {
           const y = height - padding.bottom - (value / maxValue) * chartHeight
           return (
             <g key={value}>
@@ -289,7 +283,7 @@ export function BarChart({ data, className = '', height = 300, width = 400, grou
 /**
  * Property Distribution Chart
  */
-export function PropertyDistributionChart({ data, className = '', height = 250, width = 400 }: ChartProps) {
+export function PropertyDistributionChart({ data, className = '' }: ChartProps) {
   const chartData = useMemo(() => {
     const propertyTypeCounts: Record<string, number> = {}
     const propertyCounts: number[] = []

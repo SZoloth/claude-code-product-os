@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Dashboard from '../components/Dashboard'
-import { loadDictionary } from '../lib/storage/localStorage'
+import { loadProject } from '../lib/storage/local'
 import type { DataDictionary } from '../lib/schema/dataDictionary'
 import { LoadingSpinner } from '../components/LoadingStates'
 
@@ -19,7 +19,7 @@ export default function DashboardRoute() {
     const loadData = async () => {
       try {
         setIsLoading(true)
-        const data = loadDictionary()
+        const data = loadProject()
         
         if (!data || data.events.length === 0) {
           setError('No data dictionary found. Please create one first using the wizard.')

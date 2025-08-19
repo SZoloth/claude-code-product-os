@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { validateConfig } from './lib/config'
 import { analytics } from './lib/analytics/usageTracker'
@@ -6,10 +6,9 @@ import AnalyticsPanel from './components/AnalyticsPanel'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { ToastContainer, useToast } from './components/ToastNotification'
 import { useKeyboardShortcuts, KeyboardShortcutsHelp, createGlobalShortcuts } from './hooks/useKeyboardShortcuts.tsx'
-import { useFocusTrap, useScreenReaderAnnouncement } from './hooks/useFocusManagement'
+import { useScreenReaderAnnouncement } from './hooks/useFocusManagement'
 
 function App() {
-  const navigate = useNavigate()
   const [configErrors, setConfigErrors] = useState<string[]>([])
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
