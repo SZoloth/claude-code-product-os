@@ -214,7 +214,7 @@ export const PrevizInfoPanel = () => {
             </PanelShell>
           ))}
         </div>
-        <PanelShell title="Incoming Shots" actions={[{ key: 'queue', icon: 'tray-arrow-up' }] }>
+        <PanelShell title="Incoming Shots" actions={[{ key: 'queue', icon: 'import' }] }>
           <PanelSection>
             <PanelEmptyState className="h-32" variant="none" />
           </PanelSection>
@@ -227,10 +227,10 @@ export const PrevizInfoPanel = () => {
           actions={[{ key: 'launch', icon: 'box-arrow-up-right', title: 'Open in viewer' }, { key: 'sync', icon: 'arrow-clockwise', title: 'Sync latest' }]}
         >
           <PanelSection title="Shot Overview">
-            <PanelField label="Sequence" value={<span>{selectedShot.sequence}</span>} icon="list-ol" />
-            <PanelField label="Duration" value={<span>{selectedShot.duration}</span>} icon="clock" />
+            <PanelField label="Sequence" value={<span>{selectedShot.sequence}</span>} icon="folder-fill" />
+            <PanelField label="Duration" value={<span>{selectedShot.duration}</span>} icon="calendar-event-fill" />
             <PanelField label="Assigned" value={<span>{selectedShot.artist}</span>} icon="person-circle" />
-            <PanelField label="Status" value={<span>{selectedShot.status}</span>} icon="badge-vr" />
+            <PanelField label="Status" value={<span>{selectedShot.status}</span>} icon="tag-fill" />
             <PanelField label="Library Path" value={<CopyField value={selectedShot.path} />} icon="link-45deg" />
           </PanelSection>
           <PanelSection title="Reviewers">
