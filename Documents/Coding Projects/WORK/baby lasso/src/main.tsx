@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { DesignSystemShowcase } from './examples/design-system-showcase'
+import { MinimalTest } from './minimal-test'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <DesignSystemShowcase />
+    <MinimalTest />
   </React.StrictMode>,
 )
