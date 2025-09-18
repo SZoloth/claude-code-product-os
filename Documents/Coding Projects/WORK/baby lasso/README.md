@@ -68,6 +68,32 @@ npm run test
 npm run test:ui  # Visual test runner
 ```
 
+### Deployment
+
+#### Vercel Deployment
+This project is configured for automatic deployment to Vercel:
+
+1. **Connect to Vercel**: Link your GitHub repository to Vercel
+2. **Automatic deployments**: Every push to `main` triggers a new deployment
+3. **Preview deployments**: Pull requests get preview URLs for testing
+
+**Manual deployment via Vercel CLI:**
+```bash
+# Install Vercel CLI (if not already installed)
+npm i -g vercel
+
+# Deploy to preview
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+**Environment Configuration:**
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node.js version: 18.x
+
 ## 📁 Project Structure
 
 ```
