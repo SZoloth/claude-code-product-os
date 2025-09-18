@@ -2,28 +2,28 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/lib/icons';
 
-export interface NavItem {
+export interface SidebarNavItem {
   id: string;
   label: string;
   icon?: keyof typeof import('@/lib/icons').iconLibrary;
   active?: boolean;
   badge?: string;
-  children?: NavItem[];
+  children?: SidebarNavItem[];
 }
 
-export interface NavSection {
+export interface SidebarNavSection {
   id: string;
   label?: string;
-  items: NavItem[];
+  items: SidebarNavItem[];
 }
 
 export interface SidebarNavProps extends React.HTMLAttributes<HTMLDivElement> {
-  sections: NavSection[];
+  sections: SidebarNavSection[];
   collapsible?: boolean;
-  onItemClick?: (item: NavItem) => void;
+  onItemClick?: (item: SidebarNavItem) => void;
 }
 
-const Row = ({ item, depth, onClick }: { item: NavItem; depth: number; onClick?: (i: NavItem) => void }) => {
+const Row = ({ item, depth, onClick }: { item: SidebarNavItem; depth: number; onClick?: (i: SidebarNavItem) => void }) => {
   const [open, setOpen] = React.useState(true);
   const hasChildren = (item.children?.length || 0) > 0;
   return (
@@ -68,4 +68,3 @@ export const SidebarNav = ({ sections, className, onItemClick, ...props }: Sideb
 );
 
 export default SidebarNav;
-

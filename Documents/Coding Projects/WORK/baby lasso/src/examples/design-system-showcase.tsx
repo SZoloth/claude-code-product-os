@@ -37,24 +37,66 @@ import {
   QuickActionRail,
   SearchBar,
   SearchResultsGrid,
+  SearchResultsHeader,
+  SearchResultsList,
+  SearchTabs,
+  SearchSuggestions,
+  AdvancedSearchDialog,
+  AssetPickerOverlay,
+  GlobalPanelExamples,
+  ArtInfoPanel,
+  CFXInfoPanel,
+  FLOInfoPanel,
+  GroomInfoPanel,
+  LookDevInfoPanel,
+  ModelingInfoPanel,
+  PrevizInfoPanel,
+  TopAppBar,
+  CollectionsSideNav,
+  NavTiles,
+  SidebarNav,
   AssetGridInterfaceFixed,
   type Department,
   type StatusNode,
   type Column,
   type DataTableRow,
-  type BreadcrumbItem
+  type BreadcrumbItem,
+  type AdvancedSearchState,
+  type SearchResultRow,
+  type NavTileItem,
+  type CollectionItem,
+  type SidebarNavSection
 } from '@/components/ui';
 import { Moon, Sun, Palette, Layout, Zap } from 'lucide-react';
 
+const createAdvancedState = (): AdvancedSearchState => ({
+  fileTypes: ['video'],
+  dateCreated: { preset: '30d' },
+  jobContainer: [
+    { id: 'show', key: 'Show', value: 'Dragon Movie' },
+    { id: 'sequence', key: 'Sequence', value: '010' },
+  ],
+  imageSize: { min: 2048, max: 4096 },
+  matchMode: 'any'
+});
+
 // Local demo component to keep hooks at top-level
 const SearchDemoBlock: React.FC = () => {
-  const [query, setQuery] = React.useState('');
+  const [query, setQuery] = React.useState('dragon hero');
   const [chips, setChips] = React.useState([
     { id: 'asset:dragon', label: 'asset:dragon' },
-    { id: 'type:model', label: 'type:model' },
+    { id: 'type:shot', label: 'type:shot' },
   ]);
   const [operator, setOperator] = React.useState<'AND' | 'OR' | 'NOT'>('AND');
-  const [facets, setFacets] = React.useState<Record<string, string[]>>({ size: ['2k'], keywords: ['fantasy'] });
+  const [facetValues, setFacetValues] = React.useState<Record<string, string[]>>({ size: ['2k'], keywords: ['fantasy'] });
+  const [view, setView] = React.useState<'grid' | 'table'>('grid');
+  const [sortBy, setSortBy] = React.useState('relevance');
+  const [activeTab, setActiveTab] = React.useState('all');
+  const [advancedOpen, setAdvancedOpen] = React.useState(false);
+  const [assetPickerOpen, setAssetPickerOpen] = React.useState(false);
+  const [selectedAssets, setSelectedAssets] = React.useState<string[]>([]);
+  const [advancedState, setAdvancedState] = React.useState<AdvancedSearchState>(() => createAdvancedState());
+  const [suggestionsOpen, setSuggestionsOpen] = React.useState(false);
 
   const facetDefs = [
     { key: 'keywords', label: 'Keywords', options: [
@@ -70,33 +112,139 @@ const SearchDemoBlock: React.FC = () => {
     ] },
   ] as const;
 
+  const tabs = [
+    { id: 'all', label: 'All', count: 128 },
+    { id: 'shots', label: 'Shots', count: 48 },
+    { id: 'assets', label: 'Assets', count: 32 },
+    { id: 'reviews', label: 'Reviews', count: 12 },
+  ];
+
+  const suggestions = [
+    { id: 'dragon hero action', label: 'dragon hero action', hint: 'Saved search' },
+    { id: 'fire breath burst', label: 'fire breath burst', hint: 'Tag' },
+    { id: 'cave layout polish', label: 'cave layout polish', hint: 'Recent search' },
+  ];
+
+  const gridItems = React.useMemo(() => (
+    Array.from({ length: 12 }).map((_, i) => ({
+      id: String(i + 1),
+      title: `Dragon Shot ${i + 1}`,
+      thumbnailUrl: `https://picsum.photos/seed/search${i}/300/300`,
+    }))
+  ), []);
+
+  const listItems: SearchResultRow[] = React.useMemo(() => (
+    gridItems.slice(0, 8).map((item, i) => ({
+      id: item.id,
+      title: item.title,
+      subtitle: i % 2 === 0 ? 'Sequence 010 • Layout' : 'Sequence 014 • Blocking',
+      meta: i % 2 === 0 ? 'Updated Mar 12 • 140f' : 'Updated Mar 11 • 95f'
+    }))
+  ), [gridItems]);
+
+  const pickerItems = React.useMemo(() => (
+    Array.from({ length: 8 }).map((_, i) => ({
+      id: `pick-${i}`,
+      title: `Reference ${i + 1}`,
+      thumbnailUrl: `https://picsum.photos/seed/pick${i}/240/240`
+    }))
+  ), []);
+
+  const filteredSuggestions = suggestions.filter((s) => s.label.toLowerCase().includes(query.toLowerCase()));
+
   const handleSubmit = () => {
-    console.log('search', { query, chips, operator, facets });
+    console.log('search', { query, chips, operator, facetValues, advancedState });
+    setSuggestionsOpen(false);
+  };
+
+  const handleSuggestionPick = (id: string) => {
+    const picked = suggestions.find((s) => s.id === id) ?? { id, label: id };
+    setQuery(picked.label);
+    setSuggestionsOpen(false);
+    setChips((existing) => existing.some((chip) => chip.id === picked.id) ? existing : [...existing, { id: picked.id, label: picked.label }]);
   };
 
   return (
     <div className="space-y-6">
-      <SearchBar
-        value={query}
-        onChange={setQuery}
-        chips={chips}
-        onRemoveChip={(id) => setChips((c) => c.filter((x) => x.id !== id))}
-        operator={operator}
-        onOperatorChange={setOperator}
-        facets={facetDefs as any}
-        facetValues={facets}
-        onFacetChange={(k, v) => setFacets((f) => ({ ...f, [k]: v }))}
-        onSubmit={handleSubmit}
-        onReset={() => { setQuery(''); setChips([]); setFacets({}); }}
-        onSave={() => console.log('save search')}
+      <SearchTabs
+        tabs={tabs}
+        value={activeTab}
+        onChange={setActiveTab}
       />
 
-      <SearchResultsGrid
-        items={Array.from({ length: 18 }).map((_, i) => ({
-          id: String(i + 1),
-          title: `Result ${i + 1}`,
-          thumbnailUrl: `https://picsum.photos/seed/search${i}/300/300`,
-        }))}
+      <div className="relative">
+        <SearchBar
+          value={query}
+          onChange={(val) => { setQuery(val); setSuggestionsOpen(val.length > 1); }}
+          chips={chips}
+          onRemoveChip={(id) => setChips((c) => c.filter((x) => x.id !== id))}
+          operator={operator}
+          onOperatorChange={setOperator}
+          facets={facetDefs as any}
+          facetValues={facetValues}
+          onFacetChange={(key, values) => setFacetValues((prev) => ({ ...prev, [key]: values }))}
+          onSubmit={handleSubmit}
+          onReset={() => { setQuery(''); setChips([]); setFacetValues({}); setSuggestionsOpen(false); }}
+          onSave={() => console.log('save search')}
+          className="relative z-10"
+        />
+        <SearchSuggestions
+          open={suggestionsOpen}
+          suggestions={filteredSuggestions}
+          onPick={handleSuggestionPick}
+          className="left-3 right-3 top-14"
+        />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <SearchResultsHeader
+          total={gridItems.length}
+          view={view}
+          onViewChange={(v) => v && setView(v)}
+          sortBy={sortBy}
+          onSortChange={(value) => value && setSortBy(value)}
+          sortOptions={[
+            { label: 'Relevance', value: 'relevance' },
+            { label: 'Newest', value: 'newest' },
+            { label: 'Shot Code', value: 'shot' },
+          ]}
+          className="flex-1"
+        />
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => setAdvancedOpen(true)}>
+            Advanced Filters
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setAssetPickerOpen(true)}>
+            Add Assets
+          </Button>
+        </div>
+      </div>
+
+      {view === 'grid' ? (
+        <SearchResultsGrid items={gridItems} />
+      ) : (
+        <SearchResultsList items={listItems} />
+      )}
+
+      <AdvancedSearchDialog
+        open={advancedOpen}
+        onOpenChange={setAdvancedOpen}
+        state={advancedState}
+        onChange={setAdvancedState}
+        onApply={() => setAdvancedOpen(false)}
+        onClear={() => setAdvancedState(createAdvancedState())}
+      />
+
+      <AssetPickerOverlay
+        open={assetPickerOpen}
+        onOpenChange={setAssetPickerOpen}
+        items={pickerItems}
+        selected={selectedAssets}
+        onChange={setSelectedAssets}
+        onApply={() => {
+          console.log('add assets', selectedAssets);
+          setAssetPickerOpen(false);
+        }}
       />
     </div>
   );
@@ -225,6 +373,59 @@ const sampleBreadcrumbs: BreadcrumbItem[] = [
   { id: 'dragon-movie', label: 'Dragon Movie', type: 'folder', department: 'art' },
   { id: 'characters', label: 'Characters', type: 'folder' },
   { id: 'dragon', label: 'Dragon', type: 'file', metadata: { status: 'In Progress' } }
+];
+
+const topBarAvatars = [
+  { initials: 'LK', alt: 'Lena Kim' },
+  { initials: 'JP', alt: 'Jay Patel' },
+  { initials: 'CN', alt: 'Chloe Ng' },
+];
+
+const navTileItems: NavTileItem[] = [
+  { id: 'shots', label: 'Shots', description: 'Storyboard & previz sequences', icon: 'image-grid', action: '87' },
+  { id: 'assets', label: 'Assets', description: 'Characters, props, environments', icon: 'geometry', action: '312' },
+  { id: 'reviews', label: 'Reviews', description: 'Director & department notes', icon: 'gear-fill', action: '9' },
+  { id: 'deliveries', label: 'Deliveries', description: 'Outbound packages', icon: 'link-45deg', action: '3' },
+  { id: 'playlists', label: 'Playlists', description: 'Editorial handoff lists', icon: 'file-earmark-text-fill' },
+  { id: 'archive', label: 'Archive', description: 'Legacy previz shots', icon: 'folder-fill' },
+];
+
+const collectionsNavItems: CollectionItem[] = [
+  { id: 'seq010', label: 'Sequence 010', icon: 'folder-fill', count: 26, active: true },
+  { id: 'seq014', label: 'Sequence 014', icon: 'folder-fill', count: 18 },
+  { id: 'hero-dragon', label: 'Hero Dragon', icon: 'lasso-art', count: 12 },
+  { id: 'b-roll', label: 'B-Roll Selects', icon: 'image', count: 7 },
+];
+
+const sidebarNavSections: SidebarNavSection[] = [
+  {
+    id: 'library',
+    label: 'Library',
+    items: [
+      { id: 'overview', label: 'Overview', icon: 'image-grid' },
+      {
+        id: 'previz',
+        label: 'Previz Shots',
+        icon: 'table',
+        active: true,
+        children: [
+          { id: 'blocking', label: 'Blocking' },
+          { id: 'layout', label: 'Layout' },
+          { id: 'cinematic', label: 'Cinematic' },
+        ],
+      },
+      { id: 'turntables', label: 'Turntables', icon: 'geometry' },
+      { id: 'exports', label: 'Package Exports', icon: 'link-45deg' },
+    ],
+  },
+  {
+    id: 'team',
+    label: 'Team Rooms',
+    items: [
+      { id: 'reviews', label: 'Daily Reviews', icon: 'search' },
+      { id: 'approvals', label: 'Approvals', icon: 'sliders2' },
+    ],
+  },
 ];
 
 export const DesignSystemShowcase = () => {
@@ -459,6 +660,95 @@ export const DesignSystemShowcase = () => {
                 />
                 <div className="text-xs text-muted-foreground">Canvas placeholder to show the rail anchored to the right</div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Application Shell Components */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Application Shell</CardTitle>
+              <p className="text-muted-foreground text-sm">Top app bar, collections navigation, and quick nav tiles for the library view</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <TopAppBar
+                title="Previz Library"
+                onMenuClick={() => console.log('menu toggle')}
+                center={(
+                  <Breadcrumb
+                    items={sampleBreadcrumbs}
+                    variant="compact"
+                    department="lookdev"
+                    maxItems={4}
+                    onItemClick={(item) => console.log('breadcrumb', item.id)}
+                  />
+                )}
+                actions={(
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline">Review Queue</Button>
+                    <Button size="sm">New Playlist</Button>
+                  </div>
+                )}
+                avatars={topBarAvatars}
+              />
+
+              <div className="grid gap-4 lg:grid-cols-[18rem,1fr]">
+                <CollectionsSideNav
+                  items={collectionsNavItems}
+                  actions={<Button size="sm" variant="ghost">New</Button>}
+                  onItemClick={(id) => console.log('collection', id)}
+                />
+                <div className="space-y-4">
+                  <NavTiles
+                    items={navTileItems}
+                    columns={2}
+                    onClick={(id) => console.log('tile', id)}
+                  />
+                  <SidebarNav
+                    sections={sidebarNavSections}
+                    onItemClick={(item) => console.log('sidebar', item.id)}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Panel System */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Panel Building Blocks</CardTitle>
+              <p className="text-muted-foreground text-sm">Assembled examples of empty states, icon grids, and action toolbars</p>
+            </CardHeader>
+            <CardContent>
+              <GlobalPanelExamples />
+            </CardContent>
+          </Card>
+
+          {/* Department Detail Panels */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Department Detail Panels</CardTitle>
+              <p className="text-muted-foreground text-sm">Reference implementations for art, CFX, FLO, grooming, lookdev, and modeling</p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6 xl:grid xl:grid-cols-2 xl:gap-6 xl:space-y-0">
+                <ArtInfoPanel />
+                <CFXInfoPanel />
+                <FLOInfoPanel />
+                <GroomInfoPanel />
+                <LookDevInfoPanel />
+                <ModelingInfoPanel />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Previz Panel */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Previz Pipeline Panel</CardTitle>
+              <p className="text-muted-foreground text-sm">Shot board, reviewer assignments, and activity checklist inspired by the design reference</p>
+            </CardHeader>
+            <CardContent>
+              <PrevizInfoPanel />
             </CardContent>
           </Card>
 

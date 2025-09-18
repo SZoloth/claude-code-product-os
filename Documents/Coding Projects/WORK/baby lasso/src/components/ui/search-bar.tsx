@@ -45,8 +45,15 @@ export const SearchBar = ({
       <div className="flex items-center gap-2">
         <SearchInput
           value={local}
-          onChange={(e) => setLocal(e.currentTarget.value)}
-          onClear={() => setLocal('')}
+          onChange={(e) => {
+            const next = e.currentTarget.value;
+            setLocal(next);
+            onChange?.(next);
+          }}
+          onClear={() => {
+            setLocal('');
+            onChange?.('');
+          }}
           onSubmit={() => onSubmit?.()}
           placeholder="Search assets, tags, users…"
           className="flex-1"
@@ -55,7 +62,17 @@ export const SearchBar = ({
           <Icon name="search" size="sm" />
           Search
         </Button>
-        <Button variant="outline" onClick={() => { setLocal(''); onReset?.(); }} className="h-9">Reset</Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setLocal('');
+            onReset?.();
+            onChange?.('');
+          }}
+          className="h-9"
+        >
+          Reset
+        </Button>
         <Button variant="outline" onClick={onSave} className="h-9">Save Search</Button>
       </div>
 
@@ -89,4 +106,3 @@ export const SearchBar = ({
 };
 
 export default SearchBar;
-
