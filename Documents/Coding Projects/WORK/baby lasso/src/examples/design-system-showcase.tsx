@@ -37,7 +37,7 @@ import {
   QuickActionRail,
   SearchBar,
   SearchResultsGrid,
-  AssetGridInterface,
+  AssetGridInterfaceFixed,
   type Department,
   type StatusNode,
   type Column,
@@ -694,7 +694,7 @@ export const DesignSystemShowcase = () => {
             </CardContent>
           </Card>
 
-          {/* Asset Grid Interface - Full Page Demo */}
+          {/* Asset Grid Interface - Fixed Version */}
           <Card>
             <CardHeader>
               <CardTitle>Complete Asset Grid Interface</CardTitle>
@@ -704,7 +704,7 @@ export const DesignSystemShowcase = () => {
             </CardHeader>
             <CardContent>
               <div className="rounded-lg overflow-hidden border border-gray-700">
-                <AssetGridInterface />
+                <AssetGridInterfaceFixed />
               </div>
             </CardContent>
           </Card>

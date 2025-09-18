@@ -143,3 +143,4 @@ export {
 
 // Asset Grid Interface
 export { AssetGridInterface } from './asset-grid-interface';
+export { AssetGridInterfaceFixed } from './asset-grid-interface-fixed';
