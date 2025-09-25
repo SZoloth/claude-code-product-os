@@ -3,15 +3,9 @@ import type { GridChildComponentProps } from 'react-window';
 import { FixedSizeGrid } from 'react-window';
 import AssetCard, { AssetCardSkeleton, type Asset } from './AssetCard';
 
-const STATUSES: Asset['status'][] = ['approved', 'in_review', 'draft', 'deprecated'];
-
-const mockAssets: Asset[] = Array.from({ length: 1000 }, (_, i) => ({
-  id: `${i}`,
-  name: `Asset ${i + 1}`,
-  imageUrl: `https://via.placeholder.com/300?text=Asset+${i + 1}`,
-  status: STATUSES[i % STATUSES.length],
-  description: 'Mock asset placeholder for virtualization demo.',
-}));
+type AssetsResponse = {
+  assets: Asset[];
+};
 
 const DESKTOP_REFERENCE_WIDTH = 1440;
 const TARGET_DESKTOP_COLUMNS = 10;
@@ -46,16 +40,18 @@ type CellData = {
   assets: Asset[];
   columnCount: number;
   onDownload: (assetId: string) => void;
+  isLoading: boolean;
 };
 
 const Cell = ({ columnIndex, rowIndex, style, data }: GridChildComponentProps<CellData>) => {
-  const { assets, columnCount, onDownload } = data;
+  const { assets, columnCount, onDownload, isLoading } = data;
   const index = rowIndex * columnCount + columnIndex;
   const asset = assets[index];
 
-  if (!asset) {
+  if (!asset || isLoading) {
     return (
       <div
+        key={`${rowIndex}-${columnIndex}-skeleton`}
         style={{
           ...style,
           padding: '0.75rem',
@@ -83,11 +79,48 @@ const AssetGrid: React.FC = () => {
   const [windowWidth, setWindowWidth] = React.useState(
     typeof window !== 'undefined' ? window.innerWidth : DESKTOP_REFERENCE_WIDTH
   );
+  const [assets, setAssets] = React.useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    async function fetchAssets() {
+      try {
+        const response = await fetch('/api/assets');
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const json = (await response.json()) as AssetsResponse;
+
+        if (isMounted) {
+          setAssets(json.assets);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchAssets();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const columnCount = React.useMemo(() => getColumnCount(windowWidth), [windowWidth]);
@@ -96,7 +129,9 @@ const AssetGrid: React.FC = () => {
     [windowWidth, columnCount]
   );
   const rowHeight = React.useMemo(() => getRowHeight(columnWidth), [columnWidth]);
-  const rowCount = Math.ceil(mockAssets.length / columnCount);
+  const placeholderCount = columnCount * 3;
+  const displayAssets = assets.length > 0 ? assets : new Array<Asset>(placeholderCount);
+  const rowCount = Math.max(1, Math.ceil(displayAssets.length / columnCount));
 
   const gridWidth = columnWidth * columnCount;
   const handleDownload = React.useCallback((assetId: string) => {
@@ -115,7 +150,7 @@ const AssetGrid: React.FC = () => {
       rowCount={rowCount}
       rowHeight={rowHeight}
       width={gridWidth}
-      itemData={{ assets: mockAssets, columnCount, onDownload: handleDownload }}
+      itemData={{ assets: displayAssets, columnCount, onDownload: handleDownload, isLoading: isLoading && !error }}
     >
       {Cell}
     </FixedSizeGrid>

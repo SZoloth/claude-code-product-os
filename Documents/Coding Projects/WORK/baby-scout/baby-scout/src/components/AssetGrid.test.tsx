@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import AssetGrid, { getColumnCount } from '../components/AssetGrid';
 
 type GridProps = {
@@ -10,6 +10,12 @@ type GridProps = {
 };
 
 const gridRenderLog: Array<{ columnCount: number }> = [];
+const sampleAssets = Array.from({ length: 24 }, (_, i) => ({
+  id: `asset-${i + 1}`,
+  name: `Asset ${i + 1}`,
+  imageUrl: `https://example.com/${i + 1}.png`,
+  status: (i % 3 === 0 ? 'approved' : i % 3 === 1 ? 'in_review' : 'draft') as const,
+}));
 
 jest.mock('react-window', () => {
   const FixedSizeGrid = jest.fn(({ columnCount, rowCount, itemData, children }: GridProps) => {
@@ -45,30 +51,42 @@ describe('AssetGrid', () => {
   beforeEach(() => {
     FixedSizeGrid.mockClear();
     gridRenderLog.length = 0;
+    global.fetch = jest.fn(async () => ({
+      ok: true,
+      json: async () => ({ assets: sampleAssets }),
+    })) as unknown as typeof fetch;
   });
 
-  it('renders grid items', () => {
+  afterEach(() => {
+    (global.fetch as jest.Mock | undefined)?.mockReset?.();
+  });
+
+  it('renders grid items', async () => {
     resetWindowWidth(1024);
     render(<AssetGrid />);
 
     expect(screen.getByTestId('grid')).toBeInTheDocument();
-    expect(screen.getByText('Asset 1')).toBeInTheDocument();
+    expect(await screen.findByText('Asset 1')).toBeInTheDocument();
   });
 
-  it('targets ten columns around desktop breakpoints', () => {
+  it('targets ten columns around desktop breakpoints', async () => {
     resetWindowWidth(1440);
     render(<AssetGrid />);
 
-    const { columnCount } = gridRenderLog[gridRenderLog.length - 1];
-    expect(columnCount).toBe(10);
+    await waitFor(() => {
+      const { columnCount } = gridRenderLog[gridRenderLog.length - 1];
+      expect(columnCount).toBe(10);
+    });
   });
 
-  it('falls back to a single column on narrow mobile widths', () => {
+  it('falls back to a single column on narrow mobile widths', async () => {
     resetWindowWidth(360);
     render(<AssetGrid />);
 
-    const { columnCount } = gridRenderLog[gridRenderLog.length - 1];
-    expect(columnCount).toBe(1);
+    await waitFor(() => {
+      const { columnCount } = gridRenderLog[gridRenderLog.length - 1];
+      expect(columnCount).toBe(1);
+    });
   });
 });
 

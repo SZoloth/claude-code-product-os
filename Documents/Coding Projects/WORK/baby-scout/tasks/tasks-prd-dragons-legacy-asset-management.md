@@ -20,6 +20,7 @@
 - baby-scout/src/components/AssetCard.test.tsx - Tests for AssetCard rendering and behaviour.
 - baby-scout/src/components/StatusBadge.tsx - Status pill styling for asset state.
 - baby-scout/src/components/StatusBadge.test.tsx - Tests for status badge labelling.
+- baby-scout/src/pages/api/assets/index.ts - Next.js API route serving asset listings from Prisma.
 
 ### Notes
 
@@ -39,7 +40,7 @@
 - [ ] 2.0 Virtualized asset grid (dynamic columns)
   - [x] 2.1 Refine dynamic column calculation with guardrails (min 2, target ~10 at 1440px)
   - [x] 2.2 Extract `AssetCard.tsx` with status badge, download button, and skeleton state
-  - [ ] 2.3 Replace mock data with API-backed data from `/api/assets`
+  - [x] 2.3 Replace mock data with API-backed data from `/api/assets`
   - [ ] 2.4 Add loading/error/empty states; ensure smooth virtualization with `overscanCount`
   - [ ] 2.5 Implement keyboard navigation (arrow keys, Enter) and focus ring for accessibility
   - [ ] 2.6 Tests for rendering, responsiveness, and keyboard navigation
