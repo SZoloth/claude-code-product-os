@@ -88,6 +88,28 @@ describe('AssetGrid', () => {
       expect(columnCount).toBe(1);
     });
   });
+
+  it('renders empty state when API returns no assets', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ assets: [] }),
+    });
+
+    render(<AssetGrid />);
+
+    expect(await screen.findByTestId('grid-empty')).toBeInTheDocument();
+  });
+
+  it('renders error state when API fails', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+    });
+
+    render(<AssetGrid />);
+
+    expect(await screen.findByTestId('grid-error')).toBeInTheDocument();
+  });
 });
 
 describe('getColumnCount', () => {

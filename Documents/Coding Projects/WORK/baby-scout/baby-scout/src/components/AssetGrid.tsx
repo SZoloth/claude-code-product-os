@@ -141,6 +141,28 @@ const AssetGrid: React.FC = () => {
     }
   }, []);
 
+  if (error) {
+    return (
+      <div
+        data-testid="grid-error"
+        className="flex h-[600px] items-center justify-center rounded-xl border border-rose-200 bg-rose-50 px-6 text-center text-sm font-medium text-rose-700"
+      >
+        We couldn&apos;t load assets. {error}
+      </div>
+    );
+  }
+
+  if (!isLoading && assets.length === 0) {
+    return (
+      <div
+        data-testid="grid-empty"
+        className="flex h-[600px] items-center justify-center rounded-xl border border-slate-200 bg-white px-6 text-center text-sm text-slate-500"
+      >
+        No assets found. Try adjusting your filters or check back later.
+      </div>
+    );
+  }
+
   return (
     <FixedSizeGrid
       className="grid"
@@ -150,6 +172,8 @@ const AssetGrid: React.FC = () => {
       rowCount={rowCount}
       rowHeight={rowHeight}
       width={gridWidth}
+      overscanRowCount={2}
+      overscanColumnCount={1}
       itemData={{ assets: displayAssets, columnCount, onDownload: handleDownload, isLoading: isLoading && !error }}
     >
       {Cell}

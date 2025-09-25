@@ -41,7 +41,7 @@
   - [x] 2.1 Refine dynamic column calculation with guardrails (min 2, target ~10 at 1440px)
   - [x] 2.2 Extract `AssetCard.tsx` with status badge, download button, and skeleton state
   - [x] 2.3 Replace mock data with API-backed data from `/api/assets`
-  - [ ] 2.4 Add loading/error/empty states; ensure smooth virtualization with `overscanCount`
+  - [x] 2.4 Add loading/error/empty states; ensure smooth virtualization with `overscanCount`
   - [ ] 2.5 Implement keyboard navigation (arrow keys, Enter) and focus ring for accessibility
   - [ ] 2.6 Tests for rendering, responsiveness, and keyboard navigation
   - [ ] 2.7 Create asset detail page `src/pages/assets/[id].tsx` (metadata, relationships, usage history)
