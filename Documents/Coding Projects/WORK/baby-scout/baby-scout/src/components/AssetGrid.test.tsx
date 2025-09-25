@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import AssetGrid, { getColumnCount } from '../components/AssetGrid';
 
 type GridProps = {
@@ -21,7 +21,7 @@ jest.mock('react-window', () => {
   const FixedSizeGrid = jest.fn(({ columnCount, rowCount, itemData, children }: GridProps) => {
     gridRenderLog.push({ columnCount });
     const items: React.ReactNode[] = [];
-    const rowsToRender = Math.min(rowCount, 1);
+    const rowsToRender = Math.min(rowCount, 2);
 
     for (let rowIndex = 0; rowIndex < rowsToRender; rowIndex += 1) {
       for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
@@ -109,6 +109,35 @@ describe('AssetGrid', () => {
     render(<AssetGrid />);
 
     expect(await screen.findByTestId('grid-error')).toBeInTheDocument();
+  });
+
+  it('supports keyboard navigation between assets', async () => {
+    resetWindowWidth(1024);
+    render(<AssetGrid />);
+
+    const grid = screen.getByTestId('asset-grid');
+    grid.focus();
+
+    await screen.findByText('Asset 1');
+    await waitFor(() => expect(gridRenderLog.length).toBeGreaterThan(0));
+    const { columnCount } = gridRenderLog[gridRenderLog.length - 1];
+
+    fireEvent.keyDown(grid, { key: 'ArrowRight' });
+
+    await waitFor(() => {
+      expect(document.activeElement?.textContent).toContain('Asset 2');
+    });
+
+    fireEvent.keyDown(grid, { key: 'ArrowDown' });
+
+    const targetLabel = `Asset ${columnCount + 2}`;
+
+    await waitFor(() => {
+      const targetCell = screen
+        .getByText(targetLabel)
+        .closest('[role="gridcell"]') as HTMLElement | null;
+      expect(targetCell?.getAttribute('tabindex')).toBe('0');
+    });
   });
 });
 

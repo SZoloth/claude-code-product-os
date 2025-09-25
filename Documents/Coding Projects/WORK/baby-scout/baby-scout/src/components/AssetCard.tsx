@@ -21,7 +21,10 @@ const AssetCard: React.FC<AssetCardProps> = ({ asset, onDownload, isDownloading 
   };
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <article
+      className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+      data-testid="asset-card"
+    >
       <div className="relative block aspect-square w-full overflow-hidden bg-slate-100">
         <img
           src={asset.imageUrl}
