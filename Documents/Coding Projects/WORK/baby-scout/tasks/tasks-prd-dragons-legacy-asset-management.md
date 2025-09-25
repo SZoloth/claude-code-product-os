@@ -43,7 +43,7 @@
   - [x] 2.3 Replace mock data with API-backed data from `/api/assets`
   - [x] 2.4 Add loading/error/empty states; ensure smooth virtualization with `overscanCount`
   - [x] 2.5 Implement keyboard navigation (arrow keys, Enter) and focus ring for accessibility
-  - [ ] 2.6 Tests for rendering, responsiveness, and keyboard navigation
+  - [x] 2.6 Tests for rendering, responsiveness, and keyboard navigation
   - [ ] 2.7 Create asset detail page `src/pages/assets/[id].tsx` (metadata, relationships, usage history)
 
 - [ ] 3.0 Search and filtering (indexed, keyboard shortcuts)
