@@ -21,6 +21,8 @@
 - baby-scout/src/components/StatusBadge.tsx - Status pill styling for asset state.
 - baby-scout/src/components/StatusBadge.test.tsx - Tests for status badge labelling.
 - baby-scout/src/pages/api/assets/index.ts - Next.js API route serving asset listings from Prisma.
+- baby-scout/src/pages/assets/[id].tsx - Asset detail page rendering metadata/usage history.
+- baby-scout/src/pages/assets/[id].test.tsx - Tests for asset detail page and server-side props.
 
 ### Notes
 
@@ -44,7 +46,7 @@
   - [x] 2.4 Add loading/error/empty states; ensure smooth virtualization with `overscanCount`
   - [x] 2.5 Implement keyboard navigation (arrow keys, Enter) and focus ring for accessibility
   - [x] 2.6 Tests for rendering, responsiveness, and keyboard navigation
-  - [ ] 2.7 Create asset detail page `src/pages/assets/[id].tsx` (metadata, relationships, usage history)
+  - [x] 2.7 Create asset detail page `src/pages/assets/[id].tsx` (metadata, relationships, usage history)
 
 - [ ] 3.0 Search and filtering (indexed, keyboard shortcuts)
   - [ ] 3.1 Implement `SearchCommand.tsx` (Cmd/Ctrl+K), with input debounce and keyboard navigation
