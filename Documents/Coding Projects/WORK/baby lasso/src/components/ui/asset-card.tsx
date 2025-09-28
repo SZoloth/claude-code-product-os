@@ -1,9 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from './card';
-import { Badge } from './badge';
-import { Button } from './button';
 import { cn } from '@/lib/utils';
-import { MoreHorizontal, Eye, Download, Share2 } from 'lucide-react';
 
 export enum AssetType {
   MODEL = 'MODEL',
@@ -25,6 +22,13 @@ export interface Asset {
   dateModified: string;
   description?: string;
   tags?: string[];
+  version?: string;
+  stats?: string;
+  project?: string;
+  projectCount?: string;
+  path?: string;
+  notes?: string;
+  lastModifiedLabel?: string;
 }
 
 interface AssetCardProps {
@@ -32,9 +36,6 @@ interface AssetCardProps {
   selectable?: boolean;
   selected?: boolean;
   onSelect?: (id: string) => void;
-  compact?: boolean;
-  showActions?: boolean;
-  variant?: 'default' | 'outline' | 'ghost';
   className?: string;
 }
 
@@ -52,43 +53,26 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString();
 };
 
-const getAssetTypeVariant = (type: AssetType) => {
-  switch (type) {
-    case AssetType.CHARACTER:
-      return 'default';
-    case AssetType.ENVIRONMENT:
-      return 'secondary';
-    case AssetType.PROP:
-      return 'outline';
-    case AssetType.TEXTURE:
-    case AssetType.CONCEPT_ART:
-    case AssetType.REFERENCE:
-      return 'secondary';
-    case AssetType.ANIMATION:
-      return 'default';
-    default:
-      return 'outline';
-  }
+const typeTone: Record<AssetType, string> = {
+  [AssetType.CHARACTER]: 'bg-blue-600 text-white',
+  [AssetType.ENVIRONMENT]: 'bg-emerald-500 text-white',
+  [AssetType.PROP]: 'bg-amber-500 text-white',
+  [AssetType.MODEL]: 'bg-indigo-600 text-white',
+  [AssetType.TEXTURE]: 'bg-slate-800 text-white',
+  [AssetType.CONCEPT_ART]: 'bg-pink-500 text-white',
+  [AssetType.REFERENCE]: 'bg-fuchsia-500 text-white',
+  [AssetType.ANIMATION]: 'bg-teal-500 text-white',
 };
 
 /**
- * Enhanced AssetCard component using ShadCN UI components
- * 
- * Features:
- * - Built with ShadCN Card, Badge, and Button components
- * - Multiple variants (default, outline, ghost)
- * - Consistent design system integration
- * - Responsive and accessible
- * - Optional action buttons
+ * AssetCard – presentation for assets within the modeling grid.
+ * Highlights the selected asset, displays metadata, and supports keyboard focus.
  */
 export const AssetCard = ({ 
   asset, 
   selectable = false, 
   selected = false, 
   onSelect, 
-  compact = false,
-  showActions = false,
-  variant = 'default',
   className
 }: AssetCardProps) => {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -101,108 +85,79 @@ export const AssetCard = ({
     onSelect(asset.id);
   };
 
+  const formattedDate = formatDate(asset.dateModified);
+  const formattedSize = formatFileSize(asset.fileSize);
+
   return (
     <Card 
       className={cn(
-        "group cursor-pointer transition-all duration-200 hover:shadow-md",
-        {
-          "border-primary ring-1 ring-primary": selected,
-          "hover:border-primary/50": selectable && !selected,
-        },
+        'group relative cursor-pointer overflow-hidden rounded-2xl border border-transparent bg-white shadow-sm transition-all duration-200 hover:shadow-md',
+        selected && 'ring-2 ring-primary shadow-lg',
         className
       )}
       onClick={handleSelect}
+      role={selectable ? 'button' : undefined}
+      aria-pressed={selectable ? selected : undefined}
     >
-      {/* Selection indicator */}
       {selectable && (
-        <div className="absolute top-3 left-3 z-10">
-          <div className={cn(
-            "w-5 h-5 rounded-full border-2 transition-colors",
-            selected 
-              ? "bg-primary border-primary" 
-              : "bg-background border-muted-foreground/30 group-hover:border-primary/50"
-          )}>
-            {selected && (
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-primary-foreground rounded-full" />
-              </div>
+        <div className="absolute left-4 top-4 z-20">
+          <div
+            className={cn(
+              'flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors',
+              selected ? 'border-primary bg-primary text-primary-foreground' : 'border-slate-200 bg-white text-transparent',
             )}
+          >
+            <span className="text-[10px] font-semibold">✓</span>
           </div>
         </div>
       )}
 
-      <CardContent className="p-0">
-        {/* Thumbnail */}
-        <div className="aspect-square bg-muted relative overflow-hidden rounded-t-lg">
-          {asset.thumbnailUrl ? (
-            <img 
-              src={asset.thumbnailUrl} 
-              alt={asset.name} 
-              onError={handleImageError}
-              className="w-full h-full object-cover object-center"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-              <div className="w-12 h-12 rounded-full bg-muted-foreground/10 flex items-center justify-center">
-                <span className="text-lg font-medium">
-                  {asset.type.charAt(0)}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* Asset type badge */}
-          <div className="absolute bottom-2 right-2">
-            <Badge variant={getAssetTypeVariant(asset.type)} className="text-xs">
-              {asset.type}
-            </Badge>
+      <div className="relative h-48 w-full overflow-hidden">
+        {asset.thumbnailUrl ? (
+          <img
+            src={asset.thumbnailUrl}
+            alt={asset.name}
+            onError={handleImageError}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
+            <span className="text-xl font-semibold">{asset.type.charAt(0)}</span>
           </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+        <span
+          className={cn(
+            'absolute bottom-3 left-3 inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide',
+            typeTone[asset.type] ?? 'bg-slate-800 text-white'
+          )}
+        >
+          {asset.type}
+        </span>
+      </div>
 
-          {/* Action buttons overlay */}
-          {showActions && (
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                <Eye className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                <Share2 className="h-4 w-4" />
-              </Button>
-              <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+      <CardContent className="space-y-3 p-4">
+        <div className="flex items-start justify-between">
+          <h3 className="line-clamp-1 text-sm font-semibold text-slate-900" title={asset.name}>
+            {asset.name}
+          </h3>
         </div>
-        
-        {/* Metadata */}
-        <div className="p-4">
-          <div className="space-y-2">
-            <h3 className="font-medium text-sm truncate" title={asset.name}>
-              {asset.name}
-            </h3>
-            <div className="flex justify-between items-center text-xs text-muted-foreground">
-              <span>{formatDate(asset.dateModified)}</span>
-              <span>{formatFileSize(asset.fileSize)}</span>
-            </div>
-            {asset.tags && asset.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2">
-                {asset.tags.slice(0, 2).map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs px-2 py-0">
-                    {tag}
-                  </Badge>
-                ))}
-                {asset.tags.length > 2 && (
-                  <Badge variant="outline" className="text-xs px-2 py-0">
-                    +{asset.tags.length - 2}
-                  </Badge>
-                )}
-              </div>
-            )}
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{formattedDate}</span>
+          <span>{formattedSize}</span>
+        </div>
+        {asset.tags && asset.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {asset.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-600"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
