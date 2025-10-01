@@ -24,7 +24,7 @@ class GranolaSync:
 
     def __init__(self):
         self.api_base = "https://api.granola.ai/v2"
-        self.output_dir = Path(__file__).parent / "00-inbox" / "transcripts"
+        self.output_dir = Path.home() / "Documents" / "LLM CONTEXT" / "WORK" / "DWA-PROJECT-HOME" / "00-inbox" / "transcripts"
         self.credentials_path = Path.home() / "Library" / "Application Support" / "Granola" / "supabase.json"
         self.token = None
 
@@ -116,6 +116,22 @@ class GranolaSync:
         title = doc.get("title", "Untitled")
         created_at = doc.get("created_at", "")
 
+        # Check if we've already saved this document (by doc ID)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        for existing_file in self.output_dir.glob("*.md"):
+            if existing_file.name == ".gitkeep":
+                continue
+            try:
+                with open(existing_file, 'r') as f:
+                    # Check first few lines for document ID
+                    for i, line in enumerate(f):
+                        if i > 10:  # Only check first 10 lines
+                            break
+                        if f"**Document ID:** {doc_id}" in line or f"<!-- doc-id: {doc_id} -->" in line:
+                            return existing_file  # Already saved, skip
+            except:
+                continue
+
         # Parse date for filename
         try:
             date_obj = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
@@ -129,6 +145,13 @@ class GranolaSync:
 
         filename = f"{date_str}_{safe_title}.md"
         filepath = self.output_dir / filename
+
+        # Handle filename collisions by appending number
+        counter = 1
+        while filepath.exists():
+            filename = f"{date_str}_{safe_title}-{counter}.md"
+            filepath = self.output_dir / filename
+            counter += 1
 
         # Extract transcript if available
         transcript = ""
@@ -189,15 +212,26 @@ class GranolaSync:
 
         # Save documents
         saved_count = 0
+        skipped_count = 0
         for doc in documents:
             try:
                 filepath = self.save_document(doc, include_full_note=include_notes)
-                print(f"  → {filepath.name}")
-                saved_count += 1
+                if filepath:
+                    # Check if file was just created (has recent timestamp) vs already existed
+                    import time
+                    if (time.time() - filepath.stat().st_mtime) < 10:  # Created in last 10 seconds
+                        print(f"  ✓ {filepath.name}")
+                        saved_count += 1
+                    else:
+                        skipped_count += 1
             except Exception as e:
                 print(f"  ✗ Failed to save {doc.get('title', 'unknown')}: {e}")
 
-        print(f"\n✅ Saved {saved_count} transcripts to {self.output_dir}")
+        result_msg = f"\n✅ Saved {saved_count} new transcript(s)"
+        if skipped_count > 0:
+            result_msg += f", skipped {skipped_count} existing"
+        result_msg += f" to {self.output_dir}"
+        print(result_msg)
         return True
 
 
