@@ -36,7 +36,12 @@ python3 sync-granola.py --include-notes
 
 ### Automatic Syncing (Recommended)
 
-**Automatic syncing is enabled!** Transcripts sync every 5 minutes in the background.
+**Automatic syncing is enabled!** Transcripts sync every 30 minutes during work hours only.
+
+**Schedule:**
+- **Weekdays:** 8:00am - 6:00pm (every 30 minutes)
+- **Weekends/Nights:** No syncing
+- **Total:** 21 syncs per weekday, ~105 syncs per week
 
 **Status & Management:**
 ```bash
@@ -57,9 +62,9 @@ python3 ~/.local/bin/sync-granola.py --days 1
 ```
 
 **Configuration:**
-- Runs every 30 minutes
+- Runs every 30 minutes from 8am-6pm on weekdays only
 - Syncs meetings from the last 24 hours
-- Starts automatically on login
+- Automatically skips weekends
 - Logs saved to `~/Library/Logs/granola-sync.log`
 
 ### Processing Transcripts

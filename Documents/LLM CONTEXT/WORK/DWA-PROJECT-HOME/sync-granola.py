@@ -186,6 +186,11 @@ class GranolaSync:
 
     def sync(self, days=7, include_notes=False):
         """Sync recent documents from Granola."""
+        # Only run on weekdays (Monday=0 through Friday=4)
+        if datetime.now().weekday() >= 5:
+            print("⏸️  Skipping sync (weekend)")
+            return True
+
         print("🔄 Syncing Granola transcripts...")
 
         if not self.load_credentials():
