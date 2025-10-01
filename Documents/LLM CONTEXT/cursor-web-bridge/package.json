@@ -1,0 +1,16 @@
+{
+  "name": "cursor-web-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Element-aware browser-to-Cursor bridge with packaging automation.",
+  "scripts": {
+    "preinstall": "npm install --prefix bridge-server",
+    "package:browser": "node scripts/package-browser.js",
+    "package:cursor": "node scripts/package-cursor.js",
+    "install:cursor": "node scripts/install-cursor.js",
+    "dev": "npm start --prefix bridge-server"
+  },
+  "dependencies": {
+    "@vscode/vsce": "^2.26.0"
+  }
+}

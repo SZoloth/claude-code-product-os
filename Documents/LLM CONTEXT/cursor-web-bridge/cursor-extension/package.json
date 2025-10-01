@@ -1,0 +1,26 @@
+{
+  "name": "cursor-web-bridge",
+  "displayName": "Cursor Web Bridge",
+  "version": "0.1.0",
+  "description": "Handles custom deeplinks from the browser bridge and forwards them to the Cursor composer.",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "activationEvents": [
+    "onUri",
+    "onCommand:cursor-web-bridge.showLastPayload"
+  ],
+  "main": "./extension.js",
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "cursor-web-bridge.showLastPayload",
+        "title": "Cursor Web Bridge: Show Last Payload"
+      }
+    ]
+  }
+}
