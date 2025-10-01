@@ -34,6 +34,34 @@ python3 sync-granola.py --include-notes
 - Granola app must be installed and you must be logged in
 - Python 3.7+ with `requests` library (auto-installed on first run)
 
+### Automatic Syncing (Recommended)
+
+**Automatic syncing is enabled!** Transcripts sync every 5 minutes in the background.
+
+**Status & Management:**
+```bash
+# Check if auto-sync is running
+launchctl list | grep granola
+
+# View recent sync activity
+tail -f ~/Library/Logs/granola-sync.log
+
+# Stop auto-sync
+launchctl unload ~/Library/LaunchAgents/com.granola.sync.plist
+
+# Start auto-sync
+launchctl load ~/Library/LaunchAgents/com.granola.sync.plist
+
+# Run manual sync now (for testing)
+python3 ~/.local/bin/sync-granola.py --days 1
+```
+
+**Configuration:**
+- Runs every 5 minutes
+- Syncs meetings from the last 24 hours
+- Starts automatically on login
+- Logs saved to `~/Library/Logs/granola-sync.log`
+
 ### Processing Transcripts
 
 After syncing:
