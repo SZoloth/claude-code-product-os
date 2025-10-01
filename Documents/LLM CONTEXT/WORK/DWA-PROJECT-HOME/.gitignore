@@ -1,0 +1,14 @@
+# Granola transcripts (may contain sensitive meeting content)
+00-inbox/transcripts/*.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.env
+
+# OS files
+.DS_Store
