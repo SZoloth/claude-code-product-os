@@ -57,7 +57,7 @@ python3 ~/.local/bin/sync-granola.py --days 1
 ```
 
 **Configuration:**
-- Runs every 5 minutes
+- Runs every 30 minutes
 - Syncs meetings from the last 24 hours
 - Starts automatically on login
 - Logs saved to `~/Library/Logs/granola-sync.log`
