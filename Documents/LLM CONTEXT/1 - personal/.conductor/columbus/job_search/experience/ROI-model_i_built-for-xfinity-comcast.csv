@@ -1,0 +1,59 @@
+,,,,,,,,,Metric,Scenario,Y1,Y2,Y3,Y4,Y5
+Monthly cost per support calls,Inputs,,Outputs (per month),,,,,,Annual cost per support calls,Baseline,"$1,890,000.00","$3,780,000.00","$5,670,000.00","$7,560,000.00","$9,450,000.00"
+,Target percent decrease in call volume,Target percent decrease in average handling time,Baseline,Target,Savings (percent),Savings (abs.),,,,Target,"$1,063,125.00","$2,126,250.00","$3,189,375.00","$4,252,500.00","$5,315,625.00"
+,25%,25%,"$157,500.00","$88,593.75",44%,"$68,906.25",,,,Total savings,"$826,875.00","$1,653,750.00","$2,480,625.00","$3,307,500.00","$4,134,375.00"
+Monthly cost per incorrect / rescheduled truck rolls,Inputs,,Outputs,,,,,,Annual cost per incorrect / rescheduled truck rolls,Baseline,"$18,000.00","$36,000.00","$54,000.00","$72,000.00","$90,000.00"
+,Target percent decrease in incorrect / rescheduled trucks rolls,,Baseline,Target,Savings (percent),Savings (abs.),,,,Target,"$13,500.00","$27,000.00","$40,500.00","$54,000.00","$67,500.00"
+,25%,,"$1,500.00","$1,125.00",25%,$375.00,,,,Total savings,"$4,500.00","$9,000.00","$13,500.00","$18,000.00","$22,500.00"
+Monthly cost per new service requests for add-ons and upgrades,Inputs,,Outputs,,,,,,"Annual cost per new service requests for add-ons and upgrades
+
+",Baseline,"$22,500.00","$45,000.00","$67,500.00","$90,000.00","$112,500.00"
+,Target percent decrease in average handling time of a new service request for add on / upgrade,,Baseline,Target,Savings (percent),Savings (abs.),,,,Target,"$16,875.00","$33,750.00","$50,625.00","$67,500.00","$84,375.00"
+,25%,,"$1,875.00","$1,406.25",25%,$468.75,,,,Total savings,"$5,625.00","$11,250.00","$16,875.00","$22,500.00","$28,125.00"
+Monthly cost per service request tickets for investigating outage/latency reported by customer,Inputs,,Outputs,,,,,,Annual cost per service request tickets for investigating outage/latency reported by customer,Baseline,"$14,280.00","$28,560.00","$42,840.00","$57,120.00","$71,400.00"
+,Target percent decrease in number of service request tickets,,Baseline,Target,Savings (percent),Savings (abs.),,,,Target,"$10,710.00","$21,420.00","$32,130.00","$42,840.00","$53,550.00"
+,25%,,"$1,190.00",$892.50,25%,$297.50,,,,Total savings,"$3,570.00","$7,140.00","$10,710.00","$14,280.00","$17,850.00"
+Monthly revenue from add-on accessories (upsells) ordered via self-serve portal,Inputs,,Outputs,,,,,,Annual revenue from add-on accessories (upsells) ordered via self-serve portal,Baseline,"$14,280.00","$28,560.00","$42,840.00","$57,120.00","$71,400.00"
+,Target percent increase in upsell orders processed per month,,Baseline,Target,Percent difference,Abs. diff,,,,Target,"$16,422.00","$32,844.00","$49,266.00","$65,688.00","$82,110.00"
+,15%,,"$1,190.00","$1,368.50",15%,$178.50,,,,Total additional revenue,"$2,142.00","$4,284.00","$6,426.00","$8,568.00","$10,710.00"
+,,,,,,,,,Total costs,Baseline costs,"$1,959,060.00","$3,918,120.00","$5,877,180.00","$7,836,240.00","$9,795,300.00"
+,,,,,,,,,,Target costs,"$1,120,632.00","$2,241,264.00","$3,361,896.00","$4,482,528.00","$5,603,160.00"
+,,,,,,,,,,Total savings,"$840,570.00","$1,681,140.00","$2,521,710.00","$3,362,280.00","$4,202,850.00"
+,,,,,,,,,Total revenue,Baseline revenue,"$14,280.00","$28,560.00","$42,840.00","$57,120.00","$71,400.00"
+,,,,,,,,,,Target revenue,"$17,850.00","$35,700.00","$53,550.00","$71,400.00","$89,250.00"
+,,,,,,,,,,Total additional revenue,"$3,570.00","$7,140.00","$10,710.00","$14,280.00","$17,850.00"
+,,,,,,,,,Total additional value,,"$858,420.00","$1,716,840.00","$2,575,260.00","$3,433,680.00","$4,292,100.00"
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,

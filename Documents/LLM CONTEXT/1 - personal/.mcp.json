@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "eight_sleep": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/samuelz/8sleep-mcp/build/index.js"],
+      "env": {
+        "EIGHT_SLEEP_EMAIL": "smzoloth@gmail.com",
+        "EIGHT_SLEEP_PASSWORD": "kangys-modviG-7zytpi"
+      }
+    },
+    "readwise": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@readwise/readwise-mcp"],
+      "env": {
+        "ACCESS_TOKEN": "g464fG0cS6Khl5AOsrRsa26NFnZdTaht74xR8X8scnbRkSI0vx"
+      }
+    }
+  }
+}

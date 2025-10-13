@@ -1,0 +1,26 @@
+{
+  "name": "personal-documentation-vault",
+  "version": "1.0.0",
+  "description": "Personal knowledge management and second brain system",
+  "scripts": {
+    "daily-progress": "node scripts/daily-progress.js",
+    "catch-up": "node scripts/catch-up.js",
+    "new-project": "node scripts/new-project.js",
+    "mine-vault": "node scripts/mine-vault.js",
+    "link-check": "node scripts/link-check.js",
+    "file-stats": "find . -name '*.md' | wc -l && du -sh .",
+    "recent-files": "find . -name '*.md' -mtime -7 -exec ls -la {} \\;",
+    "search-content": "grep -r --include='*.md'",
+    "clean-links": "node scripts/clean-links.js",
+    "resume:linear-onepage": "npx md-to-pdf 'job_search/Applications/17-linear/sam-zoloth-resume-linear-pm-one-page-2025-09-12.md' --config-file 'job_search/Applications/17-linear/md-to-pdf-config.json'",
+    "resume:ryan-onepage": "npx md-to-pdf 'job_search/Applications/17-ryan/Sam_Zoloth_Ryan_Product_Management_Resume.md' --config-file 'job_search/Applications/17-ryan/md-to-pdf-config.json'",
+    "resume:ryan-ats": "npx md-to-pdf 'job_search/Applications/17-ryan/sam-zoloth-ryan-product-management-resume-ats-2025-09-12.md' --config-file 'job_search/Applications/17-ryan/md-to-pdf-config-ats.json'"
+    ,"lint:resume": "python3 job_search/tools/resume_lint.py"
+  },
+  "devDependencies": {
+    "node": ">=16.0.0"
+  },
+  "keywords": ["knowledge-management", "second-brain", "documentation"],
+  "author": "Sam Zoloth",
+  "license": "Private"
+}

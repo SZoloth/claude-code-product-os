@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Personal/Sensitive Information
+*.key
+*.pem
+**/private/
+**/sensitive/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Archive folders (if any exist)
+zArchive/
+archive/
+old/
