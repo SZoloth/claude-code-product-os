@@ -123,31 +123,118 @@ _All workouts recorded between **08 Apr 2025** and **17 Jul 2025**._
 | 99 | Fri 03 Oct 2025 | Mini long run | 01:38:47 | 10.53 mi | 502 ft | 9:23/mi | 152.7 bpm | 257W avg |
 | 100 | Sun 05 Oct 2025 | Lunch Run | 01:01:45 | 7.29 mi | 220 ft | 8:28/mi | 151.9 bpm | 266W avg |
 | 101 | Tue 07 Oct 2025 | Lunch Run | 00:18:39 | 2.01 mi | 112 ft | 9:17/mi | 134.9 bpm | 246W avg |
+| 102 | Wed 09 Oct 2025 | Morning Run | 00:45:21 | 5.01 mi | 51 m | 9:02/mi | 156.4 bpm | 248W avg |
+| 103 | Thu 10 Oct 2025 | Morning Run | 01:53:18 | 12.50 mi | 95 m | 9:04/mi | 142.2 bpm | 248W avg |
+| 104 | Fri 11 Oct 2025 | Snoil sightings (Hike) | 01:18:14 | 3.24 mi | 193 m | 14:58/mi | 103.6 bpm | – |
+| 105 | Sun 13 Oct 2025 | Morning Weight Training | 00:30:15 | – | – | – | 97.6 bpm | – |
+| 106 | Tue 14 Oct 2025 | Afternoon Run | 00:23:15 | 2.41 mi | 54 m | 9:38/mi | 156.9 bpm | 252W avg |
+| 107 | Tue 14 Oct 2025 | Evening Run | 00:20:18 | 2.08 mi | 14 m | 9:46/mi | 167.4 bpm | 239W avg |
 
-### **CURRENT STATUS: THURSDAY, OCTOBER 9, 2025**
+### **CURRENT STATUS: WEDNESDAY, OCTOBER 15, 2025**
 
-**Recent Training Summary (October 1 - October 9, 2025):**
+**⚠️ CRITICAL HEALTH UPDATE: ZOLOFT WITHDRAWAL IMPACT ON TRAINING**
 
-**CONTINUED TRAINING PROGRESSION:**
-- **Wednesday 10/1**: 7.02 mi @ 9:06/mi, HR 150.2 bpm - Easy run, good aerobic effort
-- **Friday 10/3**: 10.53 mi @ 9:23/mi, HR 152.7 bpm - Mini long run, solid endurance building
-- **Sunday 10/5**: 7.29 mi @ 8:28/mi, HR 151.9 bpm - Faster-paced lunch run, good performance
-- **Tuesday 10/7**: 2.01 mi @ 9:17/mi, HR 134.9 bpm - Short easy run, recovery or time-constrained
-- **Thursday 10/9**: Planned: 5 miles easy @ 9:30-9:45/mi + 6 x 100m strides
+**Medication Status:**
+- **Zoloft prescription ran out**: Approximately 6-7 days ago (around October 8-9)
+- **SSRI withdrawal symptoms**: Began affecting training performance by Tuesday October 14
+
+**Tuesday October 14 Workout Analysis - WITHDRAWAL SYMPTOMS EVIDENT:**
+
+**Planned Workout:** 7 miles with 5 x 800m intervals @ 7:50-8:00/mi pace
+**Actual Workout:** 4.49 miles total in 2 separate easy runs (modified due to symptoms)
+
+**Physiological Indicators of Withdrawal:**
+1. **Elevated Heart Rate**: Evening run HR 167.4 bpm @ 9:46/mi pace (significantly higher than normal for easy effort)
+2. **Dizzy Spells**: Reported during workout - classic SSRI withdrawal symptom
+3. **Perceived Exertion**: "Felt harder" than normal despite slower pace
+4. **Split Sessions**: Had to split into afternoon (2.41mi, HR 156.9) + evening (2.08mi, HR 167.4)
+
+**Comparison to Normal Performance:**
+- **October 9**: 5.01 mi @ 9:02/mi, HR 156.4 bpm (normal response)
+- **October 10**: 12.50 mi @ 9:04/mi, HR 142.2 bpm (excellent long run)
+- **October 14**: 2.08 mi @ 9:46/mi, HR 167.4 bpm (elevated by ~25 bpm for similar effort)
+
+**Recent Training Summary (October 9 - October 14, 2025):**
+
+**WEEK 13 EXECUTION:**
+- **Wednesday 10/9**: 5.01 mi @ 9:02/mi, HR 156.4 bpm - Strong easy run
+- **Thursday 10/10**: 12.50 mi @ 9:04/mi, HR 142.2 bpm - **EXCELLENT long run execution**
+- **Friday 10/11**: 3.24 mi hike, HR 103.6 bpm - Active recovery (hiking)
+- **Sunday 10/13**: Weight training (30:15), HR 97.6 bpm - Upper body strength
+- **Tuesday 10/14**: 4.49 mi total in 2 runs - **MODIFIED due to Zoloft withdrawal symptoms**
+- **Wednesday 10/15**: Rest day - **MEDICATION RESUMED (evening)**
+- **Thursday 10/16**: 3.20 mi @ 8:48/mi, HR 156.4 bpm - Easy run with good effort control, symptoms resolved
 
 **TRAINING OBSERVATIONS:**
-1. Good variety in run distances, from short 2-mile recovery to 10.5-mile long run.
-2. Consistent heart rate responses across different paces, indicating good aerobic fitness.
-3. Faster pace on Sunday's run (8:28/mi) with controlled heart rate shows improved speed endurance.
-4. Tuesday's short run serves as recovery, maintaining activity while managing fatigue.
-5. Thursday's planned run aims to maintain easy aerobic fitness with short speed elements.
+1. **Pre-withdrawal fitness**: Thursday's 12.5-mile run @ 9:04/mi with HR 142 demonstrates excellent aerobic fitness
+2. **Withdrawal impact**: Tuesday's elevated HR (167 bpm) at slower pace (9:46/mi) shows significant cardiovascular stress
+3. **Smart modification**: Appropriately modified interval workout to easy runs given symptoms
+4. **Safety priority**: Recognized distress signals and adjusted training accordingly
 
-**WEEKLY SUMMARY (as of 10/7):**
-- Total Distance: 26.85 miles
-- Average Pace: 9:01/mile (excluding the short Tuesday run)
-- Long Run: 10.53 miles (39% of weekly mileage)
-- Quality Session: Sunday's faster-paced run
-- Recovery: Appropriate easy runs and short Tuesday session
+**🚨 IMMEDIATE MEDICAL ACTIONS REQUIRED:**
+
+**Priority 1 - Medication Resumption:**
+1. **Contact prescriber TODAY** to refill Zoloft prescription
+2. **Do NOT abruptly discontinue SSRIs** - requires medical supervision to taper safely
+3. **Resume medication immediately** once prescription filled
+4. **Timeline**: Symptoms typically improve 24-72 hours after resuming medication
+
+**Priority 2 - Training Modifications During Withdrawal Period:**
+
+**Until medication resumed and symptoms resolve (estimated 2-3 days):**
+- **NO interval or tempo workouts** - cardiovascular system under stress
+- **Easy runs ONLY** at conversational pace (9:45-10:15/mi range)
+- **Monitor heart rate closely** - if HR >160 bpm at easy pace, walk/stop
+- **Shorten distances** - 3-5 mile maximum until symptoms improve
+- **Listen to body** - dizziness = immediate stop, walk home if needed
+
+**Wednesday October 15 Recommendation:**
+- **Planned**: 5 miles easy @ 9:45-10:00/mi
+- **Modified**: 3-4 miles easy @ 10:00-10:15/mi, stop if HR >155 or dizziness occurs
+- **Alternative**: Rest day if symptoms persist
+
+**Thursday-Friday Modifications:**
+- **Skip quality workouts** until 24+ hours symptom-free after resuming medication
+- **Maintain easy volume** with shortened distances (3-5 miles)
+- **Focus on stability** over performance
+
+**SSRI Withdrawal Symptoms to Monitor:**
+- Dizziness/vertigo (present)
+- Elevated heart rate (present)
+- "Brain zaps" or electric sensations
+- Nausea or GI distress
+- Increased anxiety
+- Flu-like symptoms
+
+**Return to Normal Training Protocol:**
+1. **Day 1-2 after resuming medication**: Easy runs only, short distances
+2. **Day 3-4**: Gradually increase distance if symptoms resolved
+3. **Day 5+**: Resume planned training if completely symptom-free
+
+**MCM Race Impact Assessment:**
+- **Days to race**: 11 days remaining (October 26, 2025)
+- **Fitness status**: Pre-withdrawal fitness is excellent (12.5-mile run demonstrates readiness)
+- **Recovery timeline**: 3-5 days to full symptom resolution after medication resumed
+- **Training window**: Adequate time to recover and taper properly
+- **Goal status**: 3:50 MCM goal remains achievable IF medication resumed promptly
+
+**CRITICAL:** SSRI withdrawal is medically serious. Contact your prescriber immediately to refill prescription. Do not attempt to "push through" withdrawal symptoms with training.
+
+**WEEKLY SUMMARY:**
+
+**Week 13 (October 9-12) - Completed:**
+- **Total Running Distance**: 17.51 miles (Wed 5.01 + Thu 12.50)
+- **Additional Activity**: 3.24 mi hike on Friday
+- **Long Run**: 12.50 miles @ 9:04/mi, HR 142.2 (excellent execution)
+- **Average Running Pace**: 9:03/mile
+- **Status**: Strong week with excellent long run performance
+
+**Week 14 (October 13-19) - In Progress:**
+- **Total Distance So Far**: 7.69 miles (Tue 10/14: 4.49 mi + Thu 10/16: 3.20 mi)
+- **Strength Training**: Upper body (Sun 10/13)
+- **Modified Workouts**: Tuesday interval session changed to easy runs due to Zoloft withdrawal; Friday long run shifted to Saturday
+- **Remaining This Week**: Sat long run (7 mi with 2 mi @ MP)
+- Recovery: Appropriate easy runs and short session progression
 
 **UPDATED TRAINING PLAN (October 9 - October 26, 2025):**
 
@@ -157,14 +244,14 @@ Week 13 (October 9-12) - 32 miles total
 - Sat 10/11: 3 miles easy @ 9:45-10:00/mi + strength training
 - Sun 10/12: 4 miles recovery @ 10:00-10:15/mi
 
-Week 14 (October 13-19) - 28 miles total
-- Mon 10/13: Rest or cross-training (30 min easy cycling or swimming)
-- Tue 10/14: 7 miles: 2 easy + 5 x 800m @ 7:50-8:00/mi pace (2min recovery) + 1 easy
-- Wed 10/15: 5 miles easy @ 9:45-10:00/mi
-- Thu 10/16: 4 miles easy @ 9:45-10:00/mi + 4 strides
-- Fri 10/17: 8 miles with 3 miles at 8:47 marathon pace (miles 3-5)
-- Sat 10/18: 4 miles easy @ 10:00-10:15/mi + light strength training
-- Sun 10/19: Rest or 2 miles very easy @ 10:30+/mi
+Week 14 (October 13-19) - Modified taper week
+- Mon 10/13: Rest + strength training (upper body - COMPLETED)
+- Tue 10/14: Modified to 4.49 mi easy runs due to Zoloft withdrawal (COMPLETED)
+- Wed 10/15: Rest (recovery day)
+- Thu 10/16: 3.20 mi easy @ 8:48/mi (COMPLETED)
+- Fri 10/17: Rest (long run moved to Saturday)
+- Sat 10/18: 7 miles with 2 miles at 8:47 marathon pace (miles 3-4) - **SHIFTED FROM FRIDAY**
+- Sun 10/19: Rest
 
 Week 15 (October 20-26) - Race Week
 - Mon 10/20: 4 miles easy @ 9:45-10:00/mi + 4 x 20s strides

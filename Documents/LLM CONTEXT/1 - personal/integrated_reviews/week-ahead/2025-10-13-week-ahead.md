@@ -124,17 +124,17 @@
 **Cycle 1 Actions (Agency Building)** - Time blocks on high-energy days:
 
 **Monday 10/13 (morning after vision work, 9:30-11:30 AM)**:
-- [ ] #task Research 2-3 target companies/roles → [[2025-10-13]]
-- [ ] #task Submit 1 stretch application (use Scout demo as case study) → [[2025-10-13]]
+- [ ] 🔼 #personal #job-search Research 2-3 target companies/roles 📅 2025-10-13
+- [ ] ⏫ #personal #job-search Submit 1 stretch application (use Scout demo as case study) 📅 2025-10-13
 
 **Wednesday 10/15 (rest day, morning 9:00 AM-12:00 PM)**:
-- [ ] #task Submit 2 applications (1 stretch, 1 strong fit) → [[2025-10-15]]
-- [ ] #task Networking: Reach out to 2 new connections (LinkedIn, warm intros) → [[2025-10-15]]
-- [ ] #task Update resume/portfolio with Scout and Rico work → [[2025-10-15]]
+- [ ] ⏫ #personal #job-search Submit 2 applications (1 stretch, 1 strong fit) 📅 2025-10-15
+- [ ] 🔼 #personal #job-search #networking Reach out to 2 new connections (LinkedIn, warm intros) 📅 2025-10-15
+- [ ] ⏫ #personal #job-search Update resume/portfolio with Scout and Rico work 📅 2025-10-15
 
 **Friday 10/17 (morning 9:00-10:30 AM)**:
-- [ ] #task Follow-up on previous applications → [[2025-10-17]]
-- [ ] #task Response rate tracking update → [[2025-10-17]]
+- [ ] 🔼 #personal #job-search Follow-up on previous applications 📅 2025-10-17
+- [ ] 🔽 #personal #job-search Response rate tracking update 📅 2025-10-17
 
 **Success Metrics This Week**:
 - Applications/outreach: 3 applications + 2 networking conversations
@@ -156,25 +156,25 @@
 **Key Decisions/Outcomes This Week**:
 
 1. **Scout Follow-Up**: Convert Gunpowder momentum into concrete next steps
-   - [ ] #task Follow-up with Gunpowder TAC attendees → [[2025-10-14]]
-   - [ ] #task Identify 2 partner demo opportunities (Sony, ILM) → [[2025-10-15]]
-   - [ ] #task Frame Feb 28 CFO review milestones → [[2025-10-16]]
+   - [ ] 🔼 #work Follow-up with Gunpowder TAC attendees 📅 2025-10-14
+   - [ ] ⏫ #work Identify 2 partner demo opportunities (Sony, ILM) 📅 2025-10-15
+   - [ ] ⏫ #work Frame Feb 28 CFO review milestones 📅 2025-10-16
 
 2. **Rico Prioritization Pilot**: Advance framework with Jeff
-   - [ ] #task Refine decision criteria based on Jeff feedback → [[2025-10-14]]
-   - [ ] #task Identify pilot department and scope → [[2025-10-16]]
-   - [ ] #task Schedule kick-off with pilot team → [[2025-10-17]]
+   - [ ] 🔼 #work Refine decision criteria based on Jeff feedback 📅 2025-10-14
+   - [ ] ⏫ #work Identify pilot department and scope 📅 2025-10-16
+   - [ ] 🔼 #work Schedule kick-off with pilot team 📅 2025-10-17
 
 3. **Previz Asset-Installer Discussion**: Drive to decisions
-   - [ ] #task Meeting with Jon + Theo (scheduled?) → [[2025-10-XX]]
-   - [ ] #task Pre-read document with 3 decisions and success criteria → [[2025-10-XX]]
+   - [ ] 🔼 #work Meeting with Jon + Theo (scheduled?) 📅 2025-10-XX
+   - [ ] 🔼 #work Pre-read document with 3 decisions and success criteria 📅 2025-10-XX
 
 **Orchestrator vs. Outcome Owner Balance**:
 - **Orchestration needed**: Previz cross-team coordination, Scout partner demos scheduling
 - **Outcome ownership needed**: Prioritization framework design (own the methodology)
 - **Delegation opportunity**:
-  - [ ] #task Identify ONE strategic task for team member to own (Rich? Medea? Joe?) → [[2025-10-14]]
-  - [ ] #task Frame delegation as growth opportunity, not offloading → [[2025-10-14]]
+  - [ ] 🔼 #work Identify ONE strategic task for team member to own (Rich? Medea? Joe?) 📅 2025-10-14
+  - [ ] 🔼 #work Frame delegation as growth opportunity, not offloading 📅 2025-10-14
 
 **Meeting/Collaboration Plan**:
 - Scout follow-ups: Gunpowder + Amdocs internal (timing TBD)
@@ -192,24 +192,24 @@
 
 **Carter Time**:
 - **Quality time plans**:
-  - [ ] #task Tuesday evening: Focused time together (post-interval run recovery) → [[2025-10-14]]
-  - [ ] #task Thursday evening: Dinner + conversation, no work talk → [[2025-10-16]]
-  - [ ] #task Weekend: Saturday or Sunday quality experience → [[2025-10-18]]
+  - [ ] 🔼 #personal #relationships Tuesday evening: Focused time together (post-interval run recovery) 📅 2025-10-14
+  - [ ] 🔼 #personal #relationships Thursday evening: Dinner + conversation, no work talk 📅 2025-10-16
+  - [ ] 🔼 #personal #relationships Weekend: Saturday or Sunday quality experience 📅 2025-10-18
 - **Protected evenings**: At least 2 evenings of focused, present time
 - **Positive-sum intentions**: Both recharge and enjoy, not obligation-driven
 
 **Personal Growth Practices**:
-- [ ] #task RO-DBT self-enquiry: Explore jealousy/envy signals (15-20 min, 2x this week) → [[2025-10-14]], [[2025-10-17]]
+- [ ] 🔼 #personal #self-development RO-DBT self-enquiry: Explore jealousy/envy signals (15-20 min, 2x this week) 📅 2025-10-14 📅 2025-10-17
   - Questions to explore: "What is this feeling pointing toward that I want?" "What would I need to admit to myself?"
-- [ ] #task Half-smile + shoulders down breathing: Daily 2-3 minutes (anxiety regulation) → Daily
-- [ ] #task Flexible mind VARIES: Try one novel, non-productive behavior → [[2025-10-16]]
-- [ ] #task Vulnerability practice: Share progress on vision work with coaches → [[2025-10-17]]
+- [ ] 🔽 #personal #health Half-smile + shoulders down breathing: Daily 2-3 minutes (anxiety regulation) 🔁 daily
+- [ ] 🔽 #personal #self-development Flexible mind VARIES: Try one novel, non-productive behavior 📅 2025-10-16
+- [ ] 🔼 #personal #self-development Vulnerability practice: Share progress on vision work with coaches 📅 2025-10-17
 
 **Vision Work** (NON-NEGOTIABLE):
-- [ ] #task Life Vision Workshop: Monday 7:00-8:30 AM - 90 focused minutes → [[2025-10-13]]
-- [ ] #task Draft 5-year vision statement → [[2025-10-13]]
-- [ ] #task Outline domain-specific visions (professional, creative, contribution) → [[2025-10-13]]
-- [ ] #task Share draft with at least one coach for feedback → [[2025-10-14]]
+- [ ] ⏫ #personal #vision-work Life Vision Workshop: Monday 7:00-8:30 AM - 90 focused minutes 📅 2025-10-13
+- [ ] 🔼 #personal #vision-work Draft 5-year vision statement 📅 2025-10-13
+- [ ] 🔼 #personal #vision-work Outline domain-specific visions (professional, creative, contribution) 📅 2025-10-13
+- [ ] 🔼 #personal #vision-work Share draft with at least one coach for feedback 📅 2025-10-14
 
 **Time blocked**: Monday morning 7:00-8:30 AM (before work, high energy, protected)
 
@@ -362,20 +362,20 @@
 
 ### Mid-Week Check-in (Wednesday Evening 10/15)
 
-- [ ] #task Wednesday check: Are Big Three progressing? → [[2025-10-15]]
+- [ ] 🔽 #personal #planning Wednesday check: Are Big Three progressing? 📅 2025-10-15
   - Vision work: Completed Monday? If not, what happened?
   - Marathon taper: Sleep quality on track? Workouts completed?
   - Job search: Applications submitted? Networking conversations initiated?
-- [ ] #task Sleep quality: Am I prioritizing 8+ hours? Adjust if not → [[2025-10-15]]
-- [ ] #task Pattern watch: Did over-accommodation show up? Did I delegate anything? → [[2025-10-15]]
-- [ ] #task Adjust course: If Big Three not progressing, what changes needed for Thu-Fri?
+- [ ] 🔼 #personal #health Sleep quality: Am I prioritizing 8+ hours? Adjust if not 📅 2025-10-15
+- [ ] 🔽 #personal #self-development Pattern watch: Did over-accommodation show up? Did I delegate anything? 📅 2025-10-15
+- [ ] 🔼 #personal #planning Adjust course: If Big Three not progressing, what changes needed for Thu-Fri?
 
 ### End-of-Week Review (Sunday 10/19)
 
-- [ ] #task Weekly review: Complete week-in-review for Oct 13-19 → [[2025-10-19]]
-- [ ] #task Vision work check: Did I complete it or avoid again? What does that mean? → [[2025-10-19]]
-- [ ] #task Self-respect assessment: What built genuine confidence vs. sought validation? → [[2025-10-19]]
-- [ ] #task Pattern recognition: Did I interrupt blind spots or repeat them? → [[2025-10-19]]
+- [ ] 🔼 #personal #planning Weekly review: Complete week-in-review for Oct 13-19 📅 2025-10-19
+- [ ] 🔽 #personal #vision-work Vision work check: Did I complete it or avoid again? What does that mean? 📅 2025-10-19
+- [ ] 🔽 #personal #self-development Self-respect assessment: What built genuine confidence vs. sought validation? 📅 2025-10-19
+- [ ] 🔽 #personal #self-development Pattern recognition: Did I interrupt blind spots or repeat them? 📅 2025-10-19
 - [ ] #task Taper status: Is body ready for race week? Sleep quality good? → [[2025-10-19]]
 
 ---

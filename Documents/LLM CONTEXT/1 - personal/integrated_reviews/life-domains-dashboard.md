@@ -70,9 +70,9 @@
 - **Recovery days** (gentle energy): [Days] - Admin, lighter cognitive load
 
 ### Next Actions
-- [ ] #task Week 15 workouts: Complete taper plan → [[2025-10-19]]
-- [ ] #task Sleep prioritization: 9+ hours/night during taper → [[2025-10-19]]
-- [ ] #task Race week planning: Logistics, pacing strategy, gear → [[2025-10-20]]
+- [ ] 🔼 #personal #marathon-training Week 15 workouts: Complete taper plan 📅 2025-10-19
+- [ ] 🔼 #personal #health #marathon-training Sleep prioritization: 9+ hours/night during taper 📅 2025-10-19
+- [ ] ⏫ #personal #marathon-training Race week planning: Logistics, pacing strategy, gear 📅 2025-10-20
 
 ---
 
@@ -150,9 +150,9 @@
 **Time Avoided**: [X weeks/months] since created template
 
 **Next Actions**:
-- [ ] #task Life Vision Workshop: 60-90 min blocked session → [[YYYY-MM-DD]]
-- [ ] #task Draft 5-year vision statement → [[YYYY-MM-DD]]
-- [ ] #task Define domain-specific visions (career, creative, contribution) → [[YYYY-MM-DD]]
+- [ ] ⏫ #personal #vision-work Life Vision Workshop: 60-90 min blocked session 📅 YYYY-MM-DD
+- [ ] 🔼 #personal #vision-work Draft 5-year vision statement 📅 YYYY-MM-DD
+- [ ] 🔼 #personal #vision-work Define domain-specific visions (career, creative, contribution) 📅 YYYY-MM-DD
 
 ---
 
@@ -218,9 +218,9 @@
 **Strategic avoidance**: [Am I orchestrating instead of confronting?]
 
 ### Next Actions
-- [ ] #task Scout momentum: Convert to 2 follow-up opportunities → [[YYYY-MM-DD]]
-- [ ] #task Rico: Drive one key decision forward → [[YYYY-MM-DD]]
-- [ ] #task Delegation: Identify one strategic task for team member → [[YYYY-MM-DD]]
+- [ ] ⏫ #work #scout-prototype Scout momentum: Convert to 2 follow-up opportunities 📅 YYYY-MM-DD
+- [ ] ⏫ #work #rico Rico: Drive one key decision forward 📅 YYYY-MM-DD
+- [ ] 🔼 #work Delegation: Identify one strategic task for team member 📅 YYYY-MM-DD
 
 ---
 
@@ -277,9 +277,9 @@
 - Life transitions → Natural growth opportunities
 
 ### Next Actions
-- [ ] #task Weekly self-enquiry session: [Topic to explore] → [[YYYY-MM-DD]]
-- [ ] #task Practice vulnerability: [Specific action] → [[YYYY-MM-DD]]
-- [ ] #task Carter quality time: [Plan specific experience] → [[YYYY-MM-DD]]
+- [ ] 🔽 #personal #self-development Weekly self-enquiry session: [Topic to explore] 📅 YYYY-MM-DD
+- [ ] 🔼 #personal #self-development Practice vulnerability: [Specific action] 📅 YYYY-MM-DD
+- [ ] ⏫ #personal #relationships Carter quality time: [Plan specific experience] 📅 YYYY-MM-DD
 
 ---
 
@@ -316,10 +316,10 @@
 ### Commitment to Address
 
 **Next Actions** (NON-NEGOTIABLE):
-- [ ] #task Life Vision Workshop: 90-minute blocked session → [[2025-10-XX]]
-- [ ] #task Draft vision statement: Who am I becoming? → [[2025-10-XX]]
-- [ ] #task Domain visions: Professional, creative, contribution → [[2025-10-XX]]
-- [ ] #task Review with life coach: Accountability check-in → [[2025-10-XX]]
+- [ ] ⏫ #personal #vision-work Life Vision Workshop: 90-minute blocked session 📅 2025-10-XX
+- [ ] 🔼 #personal #vision-work Draft vision statement: Who am I becoming? 📅 2025-10-XX
+- [ ] 🔼 #personal #vision-work Domain visions: Professional, creative, contribution 📅 2025-10-XX
+- [ ] 🔼 #personal #self-development Review with life coach: Accountability check-in 📅 2025-10-XX
 
 **Accountability Structure**:
 - Time blocked: [Specific day/time this week]
