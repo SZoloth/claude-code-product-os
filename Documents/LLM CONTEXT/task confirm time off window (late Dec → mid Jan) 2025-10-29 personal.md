@@ -1,0 +1,3 @@
+- [ ] #task Confirm time off window (late Dec → mid Jan) [[2025-10-29]] #personal
+  - Book flights, then confirm final dates with stakeholders
+  - Add OOO to calendar and notify team
